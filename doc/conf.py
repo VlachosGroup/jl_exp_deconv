@@ -2,7 +2,7 @@
 #
 # This file only contains a selection of the most common options. For a full
 # list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+# http://www.sphinx-doc.org/en/master/config
 
 # -- Path setup --------------------------------------------------------------
 
@@ -10,19 +10,20 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.append(os.path.abspath('../'))
+#sys.path.insert(0, os.path.abspath('../'))
 
 
 # -- Project information -----------------------------------------------------
 
 project = 'jl_exp_deconv'
-copyright = '2019, Josh Lansford'
-author = 'Josh Lansford'
+copyright = '2019, Joshua Lansford'
+author = 'Joshua Lansford'
 
 # The full version, including alpha/beta/rc tags
-release = '2019'
+release = '0.0.1'
 
 
 # -- General configuration ---------------------------------------------------
@@ -30,8 +31,8 @@ release = '2019'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-]
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.coverage',
+'sphinx.ext.napoleon','sphinx.ext.mathjax','sphinx_math_dollar']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

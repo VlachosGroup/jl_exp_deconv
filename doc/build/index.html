@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Welcome to jl_exp_deconv’s documentation! &#8212; jl_exp_deconv 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-jl_exp_deconv.jl_exp_deconv">
+<span id="welcome-to-jl-exp-deconv-s-documentation"></span><h1>Welcome to jl_exp_deconv’s documentation!<a class="headerlink" href="#module-jl_exp_deconv.jl_exp_deconv" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="jl_exp_deconv.jl_exp_deconv.Model">
+<em class="property">class </em><code class="sig-prename descclassname">jl_exp_deconv.jl_exp_deconv.</code><code class="sig-name descname">Model</code><span class="sig-paren">(</span><em class="sig-param">func=&lt;function cumgauss&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for fitting cumulative Gaussian functions to data</p>
+<dl class="method">
+<dt id="jl_exp_deconv.jl_exp_deconv.Model.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">x, y, initial=[0.5, 1]</em><span class="sig-paren">)</span><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.Model.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit a Model to data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em><em> or </em><em>array</em>) – The independent variable: contrast values presented in the
+experiment</p></li>
+<li><p><strong>y</strong> (<em>float</em><em> or </em><em>array</em>) – The dependent variable</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>fit</strong> – A <a class="reference internal" href="#jl_exp_deconv.jl_exp_deconv.Fit" title="jl_exp_deconv.jl_exp_deconv.Fit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fit</span></code></a> object that contains the parameters of the model.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#jl_exp_deconv.jl_exp_deconv.Fit" title="jl_exp_deconv.jl_exp_deconv.Fit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fit</span></code></a> instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="jl_exp_deconv.jl_exp_deconv.Fit">
+<em class="property">class </em><code class="sig-prename descclassname">jl_exp_deconv.jl_exp_deconv.</code><code class="sig-name descname">Fit</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">params</em><span class="sig-paren">)</span><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.Fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a fit of a model to data</p>
+<dl class="method">
+<dt id="jl_exp_deconv.jl_exp_deconv.Fit.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.Fit.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict values of the dependent variable based on values of the
+indpendent variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>float</em><em> or </em><em>array</em>) – Values of the independent variable. Can be values presented in
+the experiment. For out-of-sample prediction (e.g. in
+cross-validation), these can be values
+that were not presented in the experiment.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>y</strong> – Predicted values of the dependent variable, corresponding to
+values of the independent variable.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float or array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="jl_exp_deconv.jl_exp_deconv.opt_err_func">
+<code class="sig-prename descclassname">jl_exp_deconv.jl_exp_deconv.</code><code class="sig-name descname">opt_err_func</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">func</em><span class="sig-paren">)</span><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.opt_err_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error function for fitting a function using non-linear optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>tuple</em>) – A tuple with the parameters of <cite>func</cite> according to their order of
+input</p></li>
+<li><p><strong>x</strong> (<em>float array</em>) – An independent variable.</p></li>
+<li><p><strong>y</strong> (<em>float array</em>) – The dependent variable.</p></li>
+<li><p><strong>func</strong> (<em>function</em>) – A function with inputs: <cite>(x, *params)</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The marginals of the fit to x/y given the params</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jl_exp_deconv.jl_exp_deconv.transform_data">
+<code class="sig-prename descclassname">jl_exp_deconv.jl_exp_deconv.</code><code class="sig-name descname">transform_data</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.transform_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that takes experimental data and gives us the
+dependent/independent variables for analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Pandas DataFrame</em><em> or </em><em>string.</em>) – If this is a DataFrame, it should have the columns <cite>contrast1</cite> and
+<cite>answer</cite> from which the dependent and independent variables will be
+extracted. If this is a string, it should be the full path to a csv
+file that contains data that can be read into a DataFrame with this
+specification.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>x</strong> (<em>array</em>) – The unique contrast differences.</p></li>
+<li><p><strong>y</strong> (<em>array</em>) – The proportion of ‘2’ answers in each contrast difference</p></li>
+<li><p><strong>n</strong> (<em>array</em>) – The number of trials in each x,y condition</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jl_exp_deconv.jl_exp_deconv.cumgauss">
+<code class="sig-prename descclassname">jl_exp_deconv.jl_exp_deconv.</code><code class="sig-name descname">cumgauss</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">mu</em>, <em class="sig-param">sigma</em><span class="sig-paren">)</span><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.cumgauss" title="Permalink to this definition">¶</a></dt>
+<dd><p>The cumulative Gaussian at x, for the distribution with mean mu and
+standard deviation sigma.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em><em> or </em><em>array</em>) – The values of x over which to evaluate the cumulative Gaussian function</p></li>
+<li><p><strong>mu</strong> (<em>float</em>) – The mean parameter. Determines the x value at which the y value is 0.5</p></li>
+<li><p><strong>sigma</strong> (<em>float</em>) – The variance parameter. Determines the slope of the curve at the point
+of Deflection</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>g</strong> – The cumulative gaussian with mean <span class="math notranslate nohighlight">\(\mu\)</span> and variance <span class="math notranslate nohighlight">\(\sigma\)</span>
+evaluated at all points in <cite>x</cite>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float or array</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Based on:
+<a class="reference external" href="http://en.wikipedia.org/wiki/Normal_distribution#Cumulative_distribution_function">http://en.wikipedia.org/wiki/Normal_distribution#Cumulative_distribution_function</a></p>
+<p>The cumulative Gaussian function is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\Phi(x) = \frac{1}{2} [1 + erf(\frac{x}{\sqrt{2}})]\]</div>
+<p>Where, <span class="math notranslate nohighlight">\(erf\)</span>, the error function is defined as:</p>
+<div class="math notranslate nohighlight">
+\[erf(x) = \frac{1}{\sqrt{\pi}} \int_{-x}^{x} e^{t^2} dt\]</div>
+</dd></dl>
+
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">jl_exp_deconv</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Joshua Lansford.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
