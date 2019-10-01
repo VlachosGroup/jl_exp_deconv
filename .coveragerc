@@ -1,7 +1,7 @@
 [run]
 branch = True
-source = shablona/*
-include = shablona/*
+source = jl_exp_deconv/*
+include = jl_exp_deconv/*
 omit = */setup.py
 [report]
-include = shablona/*
+include = jl_exp_deconv/*

@@ -5,7 +5,7 @@ API
 Classes
 -------
 
-.. currentmodule:: shablona
+.. currentmodule:: jl_exp_deconv
 
 .. autosummary::
    :template: class.rst
