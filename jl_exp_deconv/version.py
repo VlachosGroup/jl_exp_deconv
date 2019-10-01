@@ -6,7 +6,7 @@ _version_major = 0
 _version_minor = 1
 _version_micro = ''  # use '' for first of series, number for 1 and above
 _version_extra = 'dev'
-# _version_extra = ''  # Uncomment this for full releases
+_version_extra = ''  # Uncomment this for full releases
 
 # Construct full version string from these.
 _ver = [_version_major, _version_minor]
@@ -32,7 +32,7 @@ long_description = """
 
 jl_exp_deconv
 ========
-Specifically, this module trains on known experimental pure-component spectra
+This module trains on known experimental pure-component spectra
 in order to deconvolute unknown mixture spectra.
 
 
@@ -52,7 +52,7 @@ MAINTAINER = "Joshua Lansford"
 MAINTAINER_EMAIL = "lansford.jl@gmail.com"
 DESCRIPTION = description
 LONG_DESCRIPTION = long_description
-URL = "http://github.com/uwescience/jl_exp_deconv"
+URL = "http://github.com/JLANS/jl_exp_deconv"
 DOWNLOAD_URL = ""
 LICENSE = "MIT"
 AUTHOR = "Joshua Lansford"
@@ -62,6 +62,6 @@ MAJOR = _version_major
 MINOR = _version_minor
 MICRO = _version_micro
 VERSION = __version__
-PACKAGE_DATA = {'jl_exp_deconv': [pjoin('data', '*')]}
-REQUIRES = ["numpy"]
+PACKAGE_DATA = {'jl_exp_deconv': [pjoin('data', '*'),pjoin('data', '*','*')]}
+REQUIRES = ["numpy","scipy"]
 PYTHON_REQUIRES = ">= 3.5"
