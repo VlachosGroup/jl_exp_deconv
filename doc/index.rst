@@ -3,8 +3,6 @@
 Welcome to jl_exp_deconv's documentation!
 ====================================
 
-`Shablona` is a template for a small scientific Python project. 
-
 To see how to use it, please refer to the `README file 
 <https://github.com/uwescience/jl_exp_deconv/blob/master/README.md>`_ in the Github repository.
 
