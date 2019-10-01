@@ -32,8 +32,8 @@ long_description = """
 
 jl_exp_deconv
 ========
-Specifically, this module trains on known experimental pure-component spectra in 
-order to deconvolute unknown mixture spectra.
+Specifically, this module trains on known experimental pure-component spectra
+in order to deconvolute unknown mixture spectra.
 
 
 License

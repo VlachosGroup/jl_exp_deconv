@@ -1,21 +1,22 @@
-.. jl_exp_deconv documentation master file, created by sphinx-quickstart on Tue Apr 14 10:29:06 2015. You can adapt this file completely to your liking, but it should at least contain the root `toctree` directive.
+.. jl_exp_deconv documentation master file, created by
+   sphinx-quickstart on Mon Sep 30 22:39:28 2019.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
 
 Welcome to jl_exp_deconv's documentation!
-====================================
-
-To see how to use it, please refer to the `README file 
-<https://github.com/uwescience/jl_exp_deconv/blob/master/README.md>`_ in the Github repository.
-
-This is an example of documentation of the software, using sphinx_. 
-
-.. _sphinx: http://sphinx-doc.org/
-
-
+=========================================
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
-   theory
-   auto_examples/index
-   api
+   getting_started.rst
+
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

@@ -3,6 +3,7 @@ import os.path as op
 import numpy as np
 import numpy.testing as npt
 import jl_exp_deconv as sb
+import pandas as pd
 
 data_path = op.join(sb.__path__[0], 'data')
 
