@@ -32,12 +32,14 @@ class IR_DECONV:
 
         Parameters
         ----------
-        data : Pandas DataFrame
-            Data from a subjective contrast judgement experiment
+        frequency_range : numpy array
+            frequencies over which to project the intensities
 
-        func : callable, optional
-            A function that relates x and y through a set of parameters.
-            Default: :func:`cumgauss`
+        pure_data_path : string 
+            directory location where pure component spectra are stored 
+        
+        Instance variables created
+        _________
         """
         PURE_CONCENTRATIONS = []
         PURE_DATA = []
@@ -59,44 +61,26 @@ class IR_DECONV:
     
     def _get_pure_single_spectra(self):
         """
-        The cumulative Gaussian at x, for the distribution with mean mu and
-        standard deviation sigma.
-    
-        Parameters
+        Returns the pure spectra and concentrations in a format X and y, respectively,
+        where X is all spectra and y is the corresponding concentration vectors.    
+        Instance Variables
         ----------
-        x : float or array
-           The values of x over which to evaluate the cumulative Gaussian function
+        NUM_TARGETS : int
+           The number of pure components the deconvolution model is trained on
     
-        mu : float
-           The mean parameter. Determines the x value at which the y value is 0.5
+        FREQUENCY_RANGE : numpy array
+           The frequency range to project the spectral intensities onto
     
-        sigma : float
-           The variance parameter. Determines the slope of the curve at the point
-           of Deflection
     
         Returns
         -------
     
-        g : float or array
-            The cumulative gaussian with mean $\\mu$ and variance $\\sigma$
-            evaluated at all points in `x`.
-    
+        X : numpy array
+            array of concatenated pure component spectra of dimensions mxn where m is
+            the number of spectra and n is the number of discrete frequencies
+        
         Notes
         -----
-        Based on:
-        http://en.wikipedia.org/wiki/Normal_distribution#Cumulative_distribution_function
-    
-        The cumulative Gaussian function is defined as:
-    
-        .. math::
-    
-            \\Phi(x) = \\frac{1}{2} [1 + erf(\\frac{x}{\\sqrt{2}})]
-    
-        Where, $erf$, the error function is defined as:
-    
-        .. math::
-    
-            erf(x) = \\frac{1}{\\sqrt{\\pi}} \\int_{-x}^{x} e^{t^2} dt
         """
         NUM_TARGETS = self.NUM_TARGETS
         FREQUENCY_RANGE = self.FREQUENCY_RANGE
