@@ -49,12 +49,13 @@ class IR_DECONV:
             data = np.loadtxt(pure_data_path + component, delimiter=',', skiprows=1).T
             PURE_DATA.append(data)
         NUM_CONCENTRATIONS = [len(i) for i in PURE_CONCENTRATIONS]
+        self.NUM_TARGETS = len(PURE_FILES)
         self.PURE_DATA = PURE_DATA
         self.PURE_CONCENTRATIONS = PURE_CONCENTRATIONS
         self.PURE_FILES = PURE_FILES
         self.FREQUENCY_RANGE = frequency_range
         self.NUM_CONCENTRATIONS = NUM_CONCENTRATIONS
-        self.PURE_STANDARDIZED = self.standardize_spectra(PURE_DATA) 
+        self.PURE_STANDARDIZED = self.standardize_spectra(PURE_DATA)
     
     def _get_pure_single_spectra(self):
         """
@@ -109,13 +110,13 @@ class IR_DECONV:
             X[np.sum(NUM_CONCENTRATIONS[0:i],dtype='int'):np.sum(NUM_CONCENTRATIONS[0:i+1],dtype='int')] = PURE_STANDARDIZED[i]
         return X, y
                
-    def _standardize_spectra(self, DATA):
+    def standardize_spectra(self, DATA):
         """
         Standardize spectra to the same frequency discritization
         """
+        FREQUENCY_RANGE = self.FREQUENCY_RANGE
         if len(DATA[0].shape) == 1:
             DATA = [DATA]
-        FREQUENCY_RANGE = self.FREQUENCY_RANGE
         NUM_TARGETS = len(DATA)
         NUM_CONCENTRATIONS = [len(i)-1 for i in DATA]
         STANDARDIZED_SPECTRA = []
@@ -127,7 +128,7 @@ class IR_DECONV:
                 STANDARDIZED_SPECTRA.append(np.zeros((NUM_CONCENTRATIONS[i],FREQUENCY_RANGE.size)))
                 for ii in range(NUM_CONCENTRATIONS[i]):
                     STANDARDIZED_SPECTRA[i][ii] = np.interp(FREQUENCY_RANGE, DATA[i][0], DATA[i][ii+1], left=None, right=None, period=None)
-        return STANDARDIZED_SPECTRA
+        return np.array(STANDARDIZED_SPECTRA)
 
     def _get_concentrations_2_pure_spectra(self):
         """
@@ -137,37 +138,39 @@ class IR_DECONV:
         NUM_TARGETS = self.NUM_TARGETS
         PURE_SPECTRA = self.PURE_STANDARDIZED
         PURE_CONCENTRATIONS = self.PURE_CONCENTRATIONS
+        _get_concentration_coefficients = self._get_concentration_coefficients
         CONCENTRATIONS_2_PURE_SPECTRA = []
         CONCENTRATION_COEFFICIENTS = []
         for i in range(NUM_TARGETS):
-            concentration_coefficients = self.get_concentration_coefficients(PURE_CONCENTRATIONS[i])
+            concentration_coefficients = _get_concentration_coefficients(PURE_CONCENTRATIONS[i])
             CONCENTRATION_COEFFICIENTS.append(concentration_coefficients)
             concentrations_2_pure_spectra, res, rank, s = np.linalg.lstsq(concentration_coefficients, PURE_SPECTRA[i], rcond=None)
             CONCENTRATIONS_2_PURE_SPECTRA.append(concentrations_2_pure_spectra)
         return CONCENTRATIONS_2_PURE_SPECTRA
                
-    def _get_PC_loadings(self):
+    def _get_PC_loadings(self,NUM_PCs):
         """
         Get regressed parameters for computing mixed spectra given individual conentrations.
         Used in regressing concentration given the mixed spectra.
         """
-        NUM_TARGETS = self.NUM_TARGETS
-        pure_spectra, concentrations  = self.get_pure_single_spectra()
-
+        _get_pure_single_spectra = self._get_pure_single_spectra
+        pure_spectra, concentrations  = _get_pure_single_spectra()
         U, S, V = np.linalg.svd(pure_spectra, full_matrices=False)
-        PC_loadings = V[:NUM_TARGETS]
+        PC_loadings = V[:NUM_PCs]
         return PC_loadings
     
-    def _get_PCs_2_concentrations(self):
+    def _get_PCs_and_regressors(self,NUM_PCs):
         """
         Get regressed parameters for computing mixed spectra given individual conentrations.
         Used in regressing concentration given the mixed spectra.
         """
-        pure_spectra, concentrations  = self._get_pure_single_spectra()
-        pca_components = self._get_PC_loadings()
+        _get_pure_single_spectra = self._get_pure_single_spectra
+        _get_PC_loadings = self._get_PC_loadings
+        pure_spectra, concentrations  = _get_pure_single_spectra()
+        pca_components = _get_PC_loadings(NUM_PCs)
         PCs = np.dot(pure_spectra,pca_components.T)
         PCs_2_concentrations, res, rank, s = np.linalg.lstsq(PCs,concentrations,rcond=None)
-        return PCs_2_concentrations
+        return pca_components, PCs_2_concentrations
     
     def _get_concentration_coefficients(self,concentrations):
         """
@@ -179,9 +182,12 @@ class IR_DECONV:
             
 
 class IR_Results(IR_DECONV):
-    def __init__(self, dictionary=None, frequency_range = frequency_range\
-        , pure_data_path=pure_data_path, mixture_data_path=mixture_data_path):
-        IR_DECONV.__init__(self, frequency_range)
+    def __init__(self, NUM_PCs, frequency_range = frequency_range\
+        , pure_data_path=pure_data_path):
+        IR_DECONV.__init__(self, frequency_range, pure_data_path)
+        self.pca_components, self.PCs_2_concentrations = self._get_PCs_and_regressors(NUM_PCs)
+        
+    def get_mixture_figures(self, figure_directory, mixture_data_path=mixture_data_path):
         PURE_FILES = self.PURE_FILES
         MIXTURE_CONCENTRATIONS = []
         MIXTURE_NAMES = []
@@ -212,32 +218,28 @@ class IR_Results(IR_DECONV):
         self.MIXTURE_CONCENTRATIONS = MIXTURE_CONCENTRATIONS
         self.MIXTURE_FILES = MIXTURE_FILES
         self.MIXTURE_NAMES = MIXTURE_NAMES
-        self.NUM_TARGETS = len(PURE_FILES)
         self.NUM_MIXED = len(MIXTURE_FILES)
         self.MIXTURE_STANDARDIZED = self.standardize_spectra(MIXTURE_DATA) 
         self.PURE_IN_MIXTURE_STANDARDIZED = self.standardize_spectra(PURE_DATA_IN_MIXTURE)
+        self._visualize_data(figure_directory)
+        self._get_results(figure_directory)
         
-    def visualize_data(self):
+    def _visualize_data(self,figure_directory):
         NUM_TARGETS = self.NUM_TARGETS
-        CONCENTRATION_COEFFICIENTS = self.CONCENTRATION_COEFFICIENTS
-        CONCENTRATIONS_2_PURE_SPECTRA = self.CONCENTRATIONS_2_PURE_SPECTRA
+        PURE_CONCENTRATIONS = self.PURE_CONCENTRATIONS
         PURE_FILES = self.PURE_FILES
         PURE_STANDARDIZED = self.PURE_STANDARDIZED
-        PURE_IN_MIX_SUMMED = np.array([np.sum(i,axis=0) for i in self.PURE_IN_MIXTURE_STANDARDIZED])
-        MIX_STANDARDIZED = np.array(self.MIXTURE_STANDARDIZED)
+        PURE_IN_MIXTURE_STANDARDIZED = self.PURE_IN_MIXTURE_STANDARDIZED
+        MIXTURE_STANDARDIZED = self.MIXTURE_STANDARDIZED
+        _get_concentration_coefficients = self._get_concentration_coefficients
+        _get_concentrations_2_pure_spectra = self._get_concentrations_2_pure_spectra
+        PURE_IN_MIX_SUMMED = np.array([np.sum(i,axis=0) for i in PURE_IN_MIXTURE_STANDARDIZED])
+        CONCENTRATION_COEFFICIENTS = []
+        for i in range(NUM_TARGETS):
+            concentration_coefficients = _get_concentration_coefficients(PURE_CONCENTRATIONS[i])
+            CONCENTRATION_COEFFICIENTS.append(concentration_coefficients)
+        CONCENTRATIONS_2_PURE_SPECTRA = _get_concentrations_2_pure_spectra()
         pure_flattend = PURE_IN_MIX_SUMMED.flatten()
-        
-        """
-        #correction summed to mixed
-        SUMMED_2_MIXED = self._regress_summed_2_mixed()
-        num_coefficients = np.arange(NUM_TARGETS).sum()
-        MIXTURE_CONCENTRATIONS = np.array(self.MIXTURE_CONCENTRATIONS)
-        concentration_coefficients_shift_mix = np.zeros((MIXTURE_CONCENTRATIONS.shape[0],num_coefficients))
-        for count, two_spectra in enumerate(itertools.combinations(range(NUM_TARGETS),2)):
-            concentration_coefficients_shift_mix[:,count] = MIXTURE_CONCENTRATIONS[:,two_spectra[0]]*MIXTURE_CONCENTRATIONS[:,two_spectra[1]]
-        pure_flattend += np.dot(concentration_coefficients_shift_mix,SUMMED_2_MIXED).flatten()
-        """
-        
         markers = ['o','s','D','^']
         plt.figure(0, figsize=(7.2,5),dpi=400)
         #print('Comparing regression to pure species spectra')
@@ -245,53 +247,53 @@ class IR_Results(IR_DECONV):
             fit_values = np.dot(CONCENTRATION_COEFFICIENTS[i], CONCENTRATIONS_2_PURE_SPECTRA[i]).flatten()
             plt.plot(PURE_STANDARDIZED[i].flatten()\
                      ,fit_values\
-                     ,markers[i])
-            #print('std: ' + str(np.std(fit_values-PURE_STANDARDIZED[i].flatten())))
-            #print('RMSE: ' + str(rmse(PURE_STANDARDIZED[i].flatten(),fit_values)))
-            #print('mean: ' + str(np.mean(fit_values-PURE_STANDARDIZED[i].flatten())))    
+                     ,markers[i])   
         plt.plot((np.min(PURE_STANDARDIZED),np.max(PURE_STANDARDIZED)),(np.min(PURE_STANDARDIZED),np.max(PURE_STANDARDIZED)),'k',zorder=0)
         plt.legend([PURE_FILES[i][0:-9].replace('_',' ') for i in range(NUM_TARGETS)]+['Parity'])
         plt.xlabel('Experimental Pure Component Intensities')
         plt.ylabel('Regressed Intensities')
-        plt.savefig('Figures/Regressed_vs_Experimental.png', format='png')
+        plt.savefig(figure_directory+'/Regressed_vs_Experimental.png', format='png')
         plt.close()
         plt.figure(0, figsize=(7.2,5),dpi=400)
-        plt.plot((np.min(MIX_STANDARDIZED),np.max(MIX_STANDARDIZED)),(np.min(MIX_STANDARDIZED),np.max(MIX_STANDARDIZED)),'k',zorder=0)
-        plt.plot(MIX_STANDARDIZED.flatten(),pure_flattend,'o')
+        plt.plot((np.min(MIXTURE_STANDARDIZED),np.max(MIXTURE_STANDARDIZED)),(np.min(MIXTURE_STANDARDIZED),np.max(MIXTURE_STANDARDIZED)),'k',zorder=0)
+        plt.plot(MIXTURE_STANDARDIZED.flatten(),pure_flattend,'o')
         plt.xlabel('Mixture Intensities')
         plt.ylabel('Summed Pure\n Component Intensities')
-        plt.savefig('Figures/Summed_vs_Mixed.png', format='png')
+        plt.savefig(figure_directory+'/Summed_vs_Mixed.png', format='png')
         plt.close()
         
-    def deconvolute_spectra(self):
+    def deconvolute_spectra(self, spectra):
         NUM_TARGETS = self.NUM_TARGETS
-        NUM_MIXED = self.NUM_MIXED
         FREQUENCY_RANGE = self.FREQUENCY_RANGE
-        CONCENTRATIONS_2_PURE_SPECTRA = self.CONCENTRATIONS_2_PURE_SPECTRA
-        predictions = self.get_predictions()
+        _get_concentrations_2_pure_spectra = self._get_concentrations_2_pure_spectra
+        _get_concentration_coefficients = self._get_concentration_coefficients
+        get_predictions = self.get_predictions
+        CONCENTRATIONS_2_PURE_SPECTRA = _get_concentrations_2_pure_spectra()
+        predictions = get_predictions(spectra)
         deconvoluted_spectra = []
         for i in range(NUM_TARGETS):
-            concentration_coefficients = self.get_concentration_coefficients(predictions[:,i])
+            concentration_coefficients = _get_concentration_coefficients(predictions[:,i])
             deconvoluted_spectra.append(np.dot(concentration_coefficients,CONCENTRATIONS_2_PURE_SPECTRA[i]))
         reordered_spectra = []
-        for i in range(NUM_MIXED):
+        for i in range(spectra.shape[0]):
             reordered_spectra_i = np.zeros((NUM_TARGETS, FREQUENCY_RANGE.size))
             for ii in range(NUM_TARGETS):
                 reordered_spectra_i[ii] = deconvoluted_spectra[ii][i]
             reordered_spectra.append(reordered_spectra_i)
         return reordered_spectra
     
-    def get_results(self):
+    def _get_results(self,figure_directory):
         MIXTURE_FILES = self.MIXTURE_FILES
         FREQUENCY_RANGE = self.FREQUENCY_RANGE
         NUM_MIXED = self.NUM_MIXED
         NUM_TARGETS = self.NUM_TARGETS
         MIXTURE_NAMES = self.MIXTURE_NAMES
-        MIXED_SPECTRA = np.array(self.MIXTURE_STANDARDIZED)
-        deconvoluted_spectra = self.deconvolute_spectra()
+        MIXED_SPECTRA = self.MIXTURE_STANDARDIZED
+        deconvolute_spectra = self.deconvolute_spectra
         comparison_spectra = self.standardize_spectra(self.PURE_DATA_IN_MIXTURE)
-        predictions = self.get_predictions()
-        errors = self.get_95PI()
+        predictions = self.get_predictions(MIXED_SPECTRA)
+        errors = self.get_95PI(MIXED_SPECTRA)
+        deconvoluted_spectra = deconvolute_spectra(MIXED_SPECTRA)
         True_value = np.array(self.MIXTURE_CONCENTRATIONS)
         Markers = ['o','s','D','^']
         Colors = ['orange','g','b','r']
@@ -306,11 +308,11 @@ class IR_Results(IR_DECONV):
         plt.xlabel('Exeprimentally Measured Concentration')
         plt.ylabel('Predicted Concentration')
         
-        print('R2 of mixed prediction: ' + str(self.get_r2()))
-        print('RMSE of mixed prediction: ' + str(self.get_rmse()))
-        print('Max Error mixed prediction: ' + str(self.get_max_error()))
+        print('R2 of mixed prediction: ' + str(self._get_r2()))
+        print('RMSE of mixed prediction: ' + str(self._get_rmse()))
+        print('Max Error mixed prediction: ' + str(self._get_max_error()))
         plt.tight_layout()
-        plt.savefig('Figures/Model_Validation.png', format='png')
+        plt.savefig(figure_directory+'/Model_Validation.png', format='png')
         plt.close()
 
         for i in range(NUM_MIXED):
@@ -328,62 +330,50 @@ class IR_Results(IR_DECONV):
             plt.ylim([0, MIXED_SPECTRA[i].max()*1.75])
             #plt.title(MIXTURE_FILES[i][:-4])
             plt.tight_layout()
-            plt.savefig('Figures/'+MIXTURE_FILES[i][:-4]+'.png', format='png')
+            plt.savefig(figure_directory+'/'+MIXTURE_FILES[i][:-4]+'.png', format='png')
             plt.close()
-            np.savetxt('Figures/'+MIXTURE_FILES[i][:-4]+'.csv',np.concatenate((self.FREQUENCY_RANGE.reshape((-1,1)),MIXED_SPECTRA[i].reshape((-1,1))\
+            np.savetxt(figure_directory+'/'+MIXTURE_FILES[i][:-4]+'.csv',np.concatenate((self.FREQUENCY_RANGE.reshape((-1,1)),MIXED_SPECTRA[i].reshape((-1,1))\
                        ,deconvoluted_spectra[i].T,comparison_spectra[i].T),axis=1)\
                        ,delimiter=',',header='Frequency,Mixed_Spectra,'+'_Deconvoluted,'.join(MIXTURE_NAMES[0])\
                        +'_Deconvoluted,'+'_PURE_SPECTRA,'.join(MIXTURE_NAMES[0])+'_PURE_SPECTRA')
             
-    def get_r2(self):
-        y_pred = self.get_predictions().flatten()
+    def _get_r2(self):
+        y_pred = self.get_predictions(self.MIXTURE_STANDARDIZED).flatten()
         y_true = np.array(self.MIXTURE_CONCENTRATIONS).flatten()
         SStot = np.sum((y_true-y_true.mean())**2)
         SSres = np.sum((y_true-y_pred)**2)
         return 1 - SSres/SStot
     
-    def get_rmse(self):
-        y_pred = self.get_predictions().flatten()
+    def _get_rmse(self):
+        y_pred = self.get_predictions(self.MIXTURE_STANDARDIZED).flatten()
         y_true = np.array(self.MIXTURE_CONCENTRATIONS).flatten()
         SSres = np.mean((y_true-y_pred)**2)
         return SSres**0.5
-    def get_max_error(self):
-        y_pred = self.get_predictions().flatten()
+    def _get_max_error(self):
+        y_pred = self.get_predictions(self.MIXTURE_STANDARDIZED).flatten()
         y_true = np.array(self.MIXTURE_CONCENTRATIONS).flatten()
         return np.array(y_pred-y_true)[np.argmax(np.abs(y_pred-y_true))]
     
-    def get_predictions(self, spectra = None):
-        #if self.NN is not None:
-           #NN = self.NN
-            #y_pred = NN.predict(self.MIXTURE_STANDARDIZED)
-        #else:
-        if spectra is None:
-            spectra = np.array(self.MIXTURE_STANDARDIZED)
-        PCs_2_concentrations = self._get_PCs_2_concentrations()
-        pca_components = self._get_PC_loadings()
-        #CONCENTRATIONS_2_MIXED = self._regress_mixed_spectra()
-        PCs = np.dot(spectra,pca_components.T)
-        #predictions, res, rank, s = np.linalg.lstsq(CONCENTRATIONS_2_MIXED,X_fit.T,rcond=None)  
+    def get_predictions(self, spectra):
+        PCs_2_concentrations = self.PCs_2_concentrations
+        pca_components = self.pca_components
+        PCs = np.dot(spectra,pca_components.T)  
         predictions =  np.dot(PCs,PCs_2_concentrations)
-        #y_pred = predictions.T[:,0:self.NUM_TARGETS]
         return predictions
     
-    def get_95PI(self):
-        pure_spectra, pure_concentrations  = self.get_pure_single_spectra()
-        pca_components = self._get_PC_loadings()
+    def get_95PI(self, spectra):
+        pure_spectra, pure_concentrations  = self._get_pure_single_spectra()
+        pca_components = self.pca_components
         y_fit = self.get_predictions(spectra=pure_spectra)
-        mixed_spectra = np.array(self.MIXTURE_STANDARDIZED)
         NUM_TARGETS = self.NUM_TARGETS
-        #variance of nonzero fit
-        #variance of nonzero values considering each set of estimators for fitting the species concentrations is regressed separately
-        Xnew = np.dot(mixed_spectra,pca_components.T)
+        Xnew = np.dot(spectra,pca_components.T)
         Xfit = np.dot(pure_spectra,pca_components.T)
         var_yfit = np.zeros(NUM_TARGETS)
-        var_ynew = np.zeros((mixed_spectra.shape[0],NUM_TARGETS))
+        var_ynew = np.zeros((spectra.shape[0],NUM_TARGETS))
         for i in range(NUM_TARGETS):
             var_yfit[i] = np.var(pure_concentrations[:,i]-y_fit[:,i],ddof=pca_components.shape[0])
             var_estimators = np.linalg.inv(np.dot(Xfit.T,Xfit))*var_yfit[i] 
-            for ii in range(mixed_spectra.shape[0]):
+            for ii in range(spectra.shape[0]):
                 x1 = np.dot(Xnew[ii],var_estimators)
                 x2 = np.dot(x1,Xnew[ii].reshape(-1,1))[0]
                 var_ynew[ii][i] = var_yfit[i]+x2
