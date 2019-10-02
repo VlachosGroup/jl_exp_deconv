@@ -3,6 +3,7 @@ setup.py
 jl_exp_deconv/__init__.py
 jl_exp_deconv/due.py
 jl_exp_deconv/jl_exp_deconv.py
+jl_exp_deconv/plotting_tools.py
 jl_exp_deconv/version.py
 jl_exp_deconv.egg-info/PKG-INFO
 jl_exp_deconv.egg-info/SOURCES.txt
