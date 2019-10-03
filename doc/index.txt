@@ -5,14 +5,9 @@
 
 Welcome to jl_exp_deconv's documentation!
 =========================================
-.. automodule:: jl_exp_deconv.jl_exp_deconv
-   :members:
-
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
-
-
 
 Indices and tables
 ==================
@@ -20,3 +15,21 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+
+jl_exp_deconv
+=============
+.. automodule:: jl_exp_deconv.jl_exp_deconv
+   :members:
+   :undoc-members:
+   :private-members:
+
+
+
+plotting_tools
+==============
+.. automodule:: jl_exp_deconv.plotting_tools
+   :members:
+   :undoc-members:
+   :private-members:

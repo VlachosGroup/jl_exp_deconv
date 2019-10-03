@@ -22,12 +22,16 @@ due.cite(Doi("10.1167/13.9.30"),
 
 #default values
 data_path = pkg_resources.resource_filename(__name__, 'data/')
-pure_data_path = os.path.join(data_path, 'pure_components/')
-mixture_data_path = os.path.join(data_path, 'mixed_components/')
-frequency_range = np.linspace(850,1850,num=501,endpoint=True)
+
+def get_defaults():
+    pure_data_path = os.path.join(data_path, 'pure_components/')
+    mixture_data_path = os.path.join(data_path, 'mixed_components/')
+    frequency_range = np.linspace(850,1850,num=501,endpoint=True)
+    return (frequency_range, pure_data_path, mixture_data_path)
 
 class IR_DECONV:
-    def __init__(self, frequency_range=frequency_range, pure_data_path=pure_data_path):
+    """Class for generating functions to deconvolute spectra"""
+    def __init__(self, frequency_range, pure_data_path):
         """ Initialize a model object.
 
         Parameters
@@ -63,19 +67,20 @@ class IR_DECONV:
         """
         Returns the pure spectra and concentrations in a format X and y, respectively,
         where X is all spectra and y is the corresponding concentration vectors.    
+        
         Instance Variables
-        ----------
-        NUM_TARGETS : int
+        ------------------
+        NUM_TARGETS (int):
            The number of pure components the deconvolution model is trained on
     
-        FREQUENCY_RANGE : numpy array
+        FREQUENCY_RANGE (numpy.array):
            The frequency range to project the spectral intensities onto
     
     
         Returns
         -------
     
-        X : numpy array
+        X (numpy.array):
             array of concatenated pure component spectra of dimensions mxn where m is
             the number of spectra and n is the number of discrete frequencies
         
@@ -166,12 +171,11 @@ class IR_DECONV:
             
 
 class IR_Results(IR_DECONV):
-    def __init__(self, NUM_PCs, frequency_range = frequency_range\
-        , pure_data_path=pure_data_path):
+    def __init__(self, NUM_PCs, frequency_range, pure_data_path):
         IR_DECONV.__init__(self, frequency_range, pure_data_path)
         self.pca_components, self.PCs_2_concentrations = self._get_PCs_and_regressors(NUM_PCs)
         
-    def get_mixture_figures(self, figure_directory, mixture_data_path=mixture_data_path):
+    def get_mixture_figures(self, figure_directory, mixture_data_path):
         PURE_FILES = self.PURE_FILES
         MIXTURE_CONCENTRATIONS = []
         MIXTURE_NAMES = []
