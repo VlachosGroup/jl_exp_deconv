@@ -33,13 +33,21 @@ release = '0.0.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc','sphinx_rtd_theme','sphinx.ext.viewcode', \
-'sphinx.ext.coverage','sphinx.ext.napoleon','sphinx.ext.mathjax','sphinx_math_dollar']
+'sphinx.ext.coverage','sphinx.ext.napoleon','sphinx.ext.mathjax','sphinx_math_dollar',
+'sphinx.ext.intersphinx']
 #, 'sphinx.ext.coverage','sphinx.ext.napoleon','sphinx.ext.mathjax','sphinx_math_dollar']
 napoleon_google_docstring = True
 napoleon_numpy_docstring = True
+napoleon_include_private_with_doc = True
+napoleon_use_ivar = True
+napoleon_use_param = True
+napoleon_use_rtype = True
+autoclass_content = 'both'
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
+                       'numpy': ('http://docs.scipy.org/doc/numpy', None),
+                       'scipy': ('http://docs.scipy.org/doc/scipy/reference', None)}
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
-
 # The suffix of source filenames.
 source_suffix = '.txt'
 

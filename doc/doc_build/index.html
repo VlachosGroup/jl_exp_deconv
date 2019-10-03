@@ -25,6 +25,7 @@
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
         <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -166,7 +167,36 @@
 <dl class="class">
 <dt id="jl_exp_deconv.jl_exp_deconv.IR_DECONV">
 <em class="property">class </em><code class="sig-prename descclassname">jl_exp_deconv.jl_exp_deconv.</code><code class="sig-name descname">IR_DECONV</code><span class="sig-paren">(</span><em class="sig-param">frequency_range</em>, <em class="sig-param">pure_data_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jl_exp_deconv/jl_exp_deconv.html#IR_DECONV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.IR_DECONV" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class for generating functions to deconvolute spectra</p>
+<dd><p>Class for generating functions used to to deconvolute spectra</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frequency_range</strong> (<em>numpy.narray</em>) – Frequencies over which to project the intensities.</p></li>
+<li><p><strong>pure_data_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Directory location where pure component spectra are stored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>NUM_TARGETS</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of different pure commponent species.</p></li>
+<li><p><strong>PURE_DATA</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – Original values of the of the experimental pure-component spectra.
+There is a separate numpy.ndarray for each pure-component. Each
+array has shape <span class="math notranslate nohighlight">\(m+1\)</span>x<span class="math notranslate nohighlight">\(n\)</span> where <span class="math notranslate nohighlight">\(m\)</span> is the number of spectra for a
+pure component and <span class="math notranslate nohighlight">\(n\)</span> is the number of discrete intensities
+sampled by the spectrometer. nump.ndarray[0] corresponds to the
+frequencies over which the intensities are measured.</p></li>
+<li><p><strong>PURE_CONCENTRATIONS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – Concentrations (M) for each pure-component solution measured. There
+is a separate numpy.ndarry for each experimental pure-component
+and each array is of length <span class="math notranslate nohighlight">\(m\)</span>.</p></li>
+<li><p><strong>PURE_FILES</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em>) – Location to each file in pure_data_path.</p></li>
+<li><p><strong>FREQUENCY_RANGE</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a>) – Numpy array of frequencies to project each spectra onto.</p></li>
+<li><p><strong>NUM_PURE_SPECTRA</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>]</em>) – Number of spectra for each pure-component.</p></li>
+<li><p><strong>PURE_STANDARDIZED</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – Listing containing standardized sets of pure spectra where each set
+of spectra is represented by a <span class="math notranslate nohighlight">\(m\)</span>x<span class="math notranslate nohighlight">\(n\)</span> array where <span class="math notranslate nohighlight">\(m\)</span>
+is the the number of spectra for each pure-componet species and <span class="math notranslate nohighlight">\(n\)</span>
+is the length of FREQUENCY_RANGE.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="method">
 <dt id="jl_exp_deconv.jl_exp_deconv.IR_DECONV._get_PC_loadings">
 <code class="sig-name descname">_get_PC_loadings</code><span class="sig-paren">(</span><em class="sig-param">NUM_PCs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jl_exp_deconv/jl_exp_deconv.html#IR_DECONV._get_PC_loadings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.IR_DECONV._get_PC_loadings" title="Permalink to this definition">¶</a></dt>
@@ -200,22 +230,19 @@ and coefficients F(concentration) which are used in the regression</p>
 <code class="sig-name descname">_get_pure_single_spectra</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jl_exp_deconv/jl_exp_deconv.html#IR_DECONV._get_pure_single_spectra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.IR_DECONV._get_pure_single_spectra" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the pure spectra and concentrations in a format X and y, respectively,
 where X is all spectra and y is the corresponding concentration vectors.</p>
-<dl class="simple">
-<dt>NUM_TARGETS (int):</dt><dd><p>The number of pure components the deconvolution model is trained on</p>
-</dd>
-<dt>FREQUENCY_RANGE (numpy.array):</dt><dd><p>The frequency range to project the spectral intensities onto</p>
-</dd>
-</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>array of concatenated pure component spectra of dimensions mxn where m is
-the number of spectra and n is the number of discrete frequencies</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>X (numpy.array)</p>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>X</strong> (<em>numpy.ndarray</em>) – Array of concatenated pure-component spectra of dimensions <span class="math notranslate nohighlight">\(m\)</span>x<span class="math notranslate nohighlight">\(n\)</span>
+where <span class="math notranslate nohighlight">\(m\)</span> is the number of spectra and <span class="math notranslate nohighlight">\(n\)</span> is the number of
+discrete frequencies</p></li>
+<li><p><strong>y</strong> (<em>numpy.ndarray</em>) – Array of concatenated pure-component concentrations of dimensions
+<span class="math notranslate nohighlight">\(m\)</span>x<span class="math notranslate nohighlight">\(n\)</span> where <span class="math notranslate nohighlight">\(m\)</span> is the number of spectra and <span class="math notranslate nohighlight">\(n\)</span> the number of
+pure-component species.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
 </dd></dl>
 
 <dl class="method">
@@ -229,7 +256,36 @@ the number of spectra and n is the number of discrete frequencies</p>
 <dl class="class">
 <dt id="jl_exp_deconv.jl_exp_deconv.IR_Results">
 <em class="property">class </em><code class="sig-prename descclassname">jl_exp_deconv.jl_exp_deconv.</code><code class="sig-name descname">IR_Results</code><span class="sig-paren">(</span><em class="sig-param">NUM_PCs</em>, <em class="sig-param">frequency_range</em>, <em class="sig-param">pure_data_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jl_exp_deconv/jl_exp_deconv.html#IR_Results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.IR_Results" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frequency_range</strong> (<em>numpy.narray</em>) – Frequencies over which to project the intensities.</p></li>
+<li><p><strong>pure_data_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Directory location where pure component spectra are stored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>NUM_TARGETS</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of different pure commponent species.</p></li>
+<li><p><strong>PURE_DATA</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – Original values of the of the experimental pure-component spectra.
+There is a separate numpy.ndarray for each pure-component. Each
+array has shape <span class="math notranslate nohighlight">\(m+1\)</span>x<span class="math notranslate nohighlight">\(n\)</span> where <span class="math notranslate nohighlight">\(m\)</span> is the number of spectra for a
+pure component and <span class="math notranslate nohighlight">\(n\)</span> is the number of discrete intensities
+sampled by the spectrometer. nump.ndarray[0] corresponds to the
+frequencies over which the intensities are measured.</p></li>
+<li><p><strong>PURE_CONCENTRATIONS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – Concentrations (M) for each pure-component solution measured. There
+is a separate numpy.ndarry for each experimental pure-component
+and each array is of length <span class="math notranslate nohighlight">\(m\)</span>.</p></li>
+<li><p><strong>PURE_FILES</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em>) – Location to each file in pure_data_path.</p></li>
+<li><p><strong>FREQUENCY_RANGE</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a>) – Numpy array of frequencies to project each spectra onto.</p></li>
+<li><p><strong>NUM_PURE_SPECTRA</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>]</em>) – Number of spectra for each pure-component.</p></li>
+<li><p><strong>PURE_STANDARDIZED</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – Listing containing standardized sets of pure spectra where each set
+of spectra is represented by a <span class="math notranslate nohighlight">\(m\)</span>x<span class="math notranslate nohighlight">\(n\)</span> array where <span class="math notranslate nohighlight">\(m\)</span>
+is the the number of spectra for each pure-componet species and <span class="math notranslate nohighlight">\(n\)</span>
+is the length of FREQUENCY_RANGE.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
 <dt id="jl_exp_deconv.jl_exp_deconv.IR_Results._get_max_error">
 <code class="sig-name descname">_get_max_error</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jl_exp_deconv/jl_exp_deconv.html#IR_Results._get_max_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.IR_Results._get_max_error" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>

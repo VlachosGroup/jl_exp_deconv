@@ -25,6 +25,7 @@
         <script type="text/javascript" src="../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../_static/doctools.js"></script>
         <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -173,20 +174,43 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">frequency_range</span><span class="p">,</span> <span class="n">pure_data_path</span><span class="p">,</span> <span class="n">mixture_data_path</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="IR_DECONV"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_DECONV">[docs]</a><span class="k">class</span> <span class="nc">IR_DECONV</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Class for generating functions to deconvolute spectra&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class for generating functions used to to deconvolute spectra&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frequency_range</span><span class="p">,</span> <span class="n">pure_data_path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Initialize a model object.</span>
-
+        <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        frequency_range : numpy array</span>
-<span class="sd">            frequencies over which to project the intensities</span>
+<span class="sd">        frequency_range : numpy.narray</span>
+<span class="sd">            Frequencies over which to project the intensities.</span>
 
-<span class="sd">        pure_data_path : string </span>
-<span class="sd">            directory location where pure component spectra are stored </span>
+<span class="sd">        pure_data_path : str</span>
+<span class="sd">            Directory location where pure component spectra are stored.</span>
 <span class="sd">        </span>
-<span class="sd">        Instance variables created</span>
-<span class="sd">        _________</span>
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        NUM_TARGETS : int</span>
+<span class="sd">            Number of different pure commponent species.</span>
+<span class="sd">        PURE_DATA : list[numpy.ndarray]</span>
+<span class="sd">            Original values of the of the experimental pure-component spectra.</span>
+<span class="sd">            There is a separate numpy.ndarray for each pure-component. Each </span>
+<span class="sd">            array has shape $m+1$x$n$ where $m$ is the number of spectra for a</span>
+<span class="sd">            pure component and $n$ is the number of discrete intensities</span>
+<span class="sd">            sampled by the spectrometer. nump.ndarray[0] corresponds to the</span>
+<span class="sd">            frequencies over which the intensities are measured.</span>
+<span class="sd">        PURE_CONCENTRATIONS : list[numpy.ndarray]</span>
+<span class="sd">            Concentrations (M) for each pure-component solution measured. There</span>
+<span class="sd">            is a separate numpy.ndarry for each experimental pure-component</span>
+<span class="sd">            and each array is of length $m$.</span>
+<span class="sd">        PURE_FILES : list[str]</span>
+<span class="sd">            Location to each file in pure_data_path.</span>
+<span class="sd">        FREQUENCY_RANGE : numpy.ndarray</span>
+<span class="sd">            Numpy array of frequencies to project each spectra onto.</span>
+<span class="sd">        NUM_PURE_SPECTRA : list[int]</span>
+<span class="sd">            Number of spectra for each pure-component.</span>
+<span class="sd">        PURE_STANDARDIZED : list[numpy.ndarray]</span>
+<span class="sd">            Listing containing standardized sets of pure spectra where each set</span>
+<span class="sd">            of spectra is represented by a $m$x$n$ array where $m$</span>
+<span class="sd">            is the the number of spectra for each pure-componet species and $n$</span>
+<span class="sd">            is the length of FREQUENCY_RANGE.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">PURE_CONCENTRATIONS</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">PURE_DATA</span> <span class="o">=</span> <span class="p">[]</span>
@@ -197,49 +221,42 @@
             <span class="n">PURE_CONCENTRATIONS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">concentration</span><span class="p">)</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">pure_data_path</span> <span class="o">+</span> <span class="n">component</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
             <span class="n">PURE_DATA</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">NUM_CONCENTRATIONS</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">PURE_CONCENTRATIONS</span><span class="p">]</span>
+        <span class="n">NUM_PURE_SPECTRA</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">PURE_CONCENTRATIONS</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">NUM_TARGETS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">PURE_FILES</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">PURE_DATA</span> <span class="o">=</span> <span class="n">PURE_DATA</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">PURE_CONCENTRATIONS</span> <span class="o">=</span> <span class="n">PURE_CONCENTRATIONS</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">PURE_FILES</span> <span class="o">=</span> <span class="n">PURE_FILES</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">FREQUENCY_RANGE</span> <span class="o">=</span> <span class="n">frequency_range</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">NUM_CONCENTRATIONS</span> <span class="o">=</span> <span class="n">NUM_CONCENTRATIONS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NUM_PURE_SPECTRA</span> <span class="o">=</span> <span class="n">NUM_PURE_SPECTRA</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">PURE_STANDARDIZED</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardize_spectra</span><span class="p">(</span><span class="n">PURE_DATA</span><span class="p">)</span>
     
 <div class="viewcode-block" id="IR_DECONV._get_pure_single_spectra"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_DECONV._get_pure_single_spectra">[docs]</a>    <span class="k">def</span> <span class="nf">_get_pure_single_spectra</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the pure spectra and concentrations in a format X and y, respectively,</span>
 <span class="sd">        where X is all spectra and y is the corresponding concentration vectors.    </span>
-<span class="sd">        </span>
-<span class="sd">        Instance Variables</span>
-<span class="sd">        ------------------</span>
-<span class="sd">        NUM_TARGETS (int):</span>
-<span class="sd">           The number of pure components the deconvolution model is trained on</span>
-<span class="sd">    </span>
-<span class="sd">        FREQUENCY_RANGE (numpy.array):</span>
-<span class="sd">           The frequency range to project the spectral intensities onto</span>
-<span class="sd">    </span>
-<span class="sd">    </span>
+<span class="sd">           </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">    </span>
-<span class="sd">        X (numpy.array):</span>
-<span class="sd">            array of concatenated pure component spectra of dimensions mxn where m is</span>
-<span class="sd">            the number of spectra and n is the number of discrete frequencies</span>
+<span class="sd">        X : numpy.ndarray</span>
+<span class="sd">            Array of concatenated pure-component spectra of dimensions $m$x$n$ </span>
+<span class="sd">            where $m$ is the number of spectra and $n$ is the number of</span>
+<span class="sd">            discrete frequencies</span>
 <span class="sd">        </span>
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
+<span class="sd">        y : numpy.ndarray</span>
+<span class="sd">            Array of concatenated pure-component concentrations of dimensions</span>
+<span class="sd">            $m$x$n$ where $m$ is the number of spectra and $n$ the number of</span>
+<span class="sd">            pure-component species.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">NUM_TARGETS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NUM_TARGETS</span>
         <span class="n">FREQUENCY_RANGE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FREQUENCY_RANGE</span>
         <span class="n">PURE_STANDARDIZED</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PURE_STANDARDIZED</span>
         <span class="n">PURE_CONCENTRATIONS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PURE_CONCENTRATIONS</span>
-        <span class="n">NUM_CONCENTRATIONS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NUM_CONCENTRATIONS</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">NUM_CONCENTRATIONS</span><span class="p">),</span><span class="n">FREQUENCY_RANGE</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">NUM_CONCENTRATIONS</span><span class="p">),</span><span class="n">NUM_TARGETS</span><span class="p">))</span>
+        <span class="n">NUM_PURE_SPECTRA</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NUM_PURE_SPECTRA</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">NUM_PURE_SPECTRA</span><span class="p">),</span><span class="n">FREQUENCY_RANGE</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">NUM_PURE_SPECTRA</span><span class="p">),</span><span class="n">NUM_TARGETS</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_TARGETS</span><span class="p">):</span>
-            <span class="n">y</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">NUM_CONCENTRATIONS</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">):</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">NUM_CONCENTRATIONS</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">),</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">PURE_CONCENTRATIONS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">X</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">NUM_CONCENTRATIONS</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">):</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">NUM_CONCENTRATIONS</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">PURE_STANDARDIZED</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">y</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">NUM_PURE_SPECTRA</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">):</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">NUM_PURE_SPECTRA</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">),</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">PURE_CONCENTRATIONS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">X</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">NUM_PURE_SPECTRA</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">):</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">NUM_PURE_SPECTRA</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">PURE_STANDARDIZED</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span></div>
                
 <div class="viewcode-block" id="IR_DECONV.standardize_spectra"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_DECONV.standardize_spectra">[docs]</a>    <span class="k">def</span> <span class="nf">standardize_spectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">DATA</span><span class="p">):</span>
@@ -250,17 +267,17 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">DATA</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">DATA</span> <span class="o">=</span> <span class="p">[</span><span class="n">DATA</span><span class="p">]</span>
         <span class="n">NUM_TARGETS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">DATA</span><span class="p">)</span>
-        <span class="n">NUM_CONCENTRATIONS</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">DATA</span><span class="p">]</span>
+        <span class="n">NUM_PURE_SPECTRA</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">DATA</span><span class="p">]</span>
         <span class="n">STANDARDIZED_SPECTRA</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_TARGETS</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">NUM_CONCENTRATIONS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">NUM_PURE_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">STANDARDIZED_SPECTRA</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">FREQUENCY_RANGE</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
                 <span class="n">STANDARDIZED_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">FREQUENCY_RANGE</span><span class="p">,</span> <span class="n">DATA</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">DATA</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">STANDARDIZED_SPECTRA</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">NUM_CONCENTRATIONS</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">FREQUENCY_RANGE</span><span class="o">.</span><span class="n">size</span><span class="p">)))</span>
-                <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_CONCENTRATIONS</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+                <span class="n">STANDARDIZED_SPECTRA</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">NUM_PURE_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">FREQUENCY_RANGE</span><span class="o">.</span><span class="n">size</span><span class="p">)))</span>
+                <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_PURE_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
                     <span class="n">STANDARDIZED_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">FREQUENCY_RANGE</span><span class="p">,</span> <span class="n">DATA</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">DATA</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">STANDARDIZED_SPECTRA</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">STANDARDIZED_SPECTRA</span></div>
 
 <div class="viewcode-block" id="IR_DECONV._get_concentrations_2_pure_spectra"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_DECONV._get_concentrations_2_pure_spectra">[docs]</a>    <span class="k">def</span> <span class="nf">_get_concentrations_2_pure_spectra</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -486,6 +503,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_pred</span><span class="o">-</span><span class="n">y_true</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_pred</span><span class="o">-</span><span class="n">y_true</span><span class="p">))]</span></div>
     
 <div class="viewcode-block" id="IR_Results.get_predictions"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_Results.get_predictions">[docs]</a>    <span class="k">def</span> <span class="nf">get_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectra</span><span class="p">):</span>
+        <span class="n">spectra</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">spectra</span><span class="p">)</span>
         <span class="n">PCs_2_concentrations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PCs_2_concentrations</span>
         <span class="n">pca_components</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca_components</span>
         <span class="n">PCs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">spectra</span><span class="p">,</span><span class="n">pca_components</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>  
@@ -493,6 +511,7 @@
         <span class="k">return</span> <span class="n">predictions</span></div>
     
 <div class="viewcode-block" id="IR_Results.get_95PI"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_Results.get_95PI">[docs]</a>    <span class="k">def</span> <span class="nf">get_95PI</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectra</span><span class="p">):</span>
+        <span class="n">spectra</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">spectra</span><span class="p">)</span>
         <span class="n">pure_spectra</span><span class="p">,</span> <span class="n">pure_concentrations</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pure_single_spectra</span><span class="p">()</span>
         <span class="n">pca_components</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca_components</span>
         <span class="n">y_fit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">(</span><span class="n">spectra</span><span class="o">=</span><span class="n">pure_spectra</span><span class="p">)</span>

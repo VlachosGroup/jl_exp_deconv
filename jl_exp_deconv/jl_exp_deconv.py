@@ -4,46 +4,74 @@ import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
 import pkg_resources
-if __name__ == '__main__':
-    from due import due, Doi
-else:
-    from .due import due, Doi
-
-#__all__ = ["Model", "Fit", "opt_err_func", "transform_data", "cumgauss"]
-
-
-# Use duecredit (duecredit.org) to provide a citation to relevant work to
-# be cited. This does nothing, unless the user has duecredit installed,
-# And calls this with duecredit (as in `python -m duecredit script.py`):
-due.cite(Doi("10.1167/13.9.30"),
-         description="Template project for small scientific Python projects",
-         tags=["reference-implementation"],
-         path='jl_exp_deconv')
+#if __name__ == '__main__':
+#    from due import due, Doi
+#else:
+#    from .due import due, Doi
 
 #default values
 data_path = pkg_resources.resource_filename(__name__, 'data/')
 
 def get_defaults():
+    """
+    Returns default frequencies to project intensities onto as well as default
+    paths for locations of the pure and mixture spectroscopic data.
+    
+    Returns
+    -------
+    frequency_range: numpy.ndarray
+        Frequencies over which to project the intensities.
+    
+    pure_data_path : str
+        Directory location where pure-component spectra are stored.
+        
+    mixture_data_path : str
+        Directory location where mixed-component spectra are stored.
+    
+    """
     pure_data_path = os.path.join(data_path, 'pure_components/')
     mixture_data_path = os.path.join(data_path, 'mixed_components/')
     frequency_range = np.linspace(850,1850,num=501,endpoint=True)
-    return (frequency_range, pure_data_path, mixture_data_path)
+    return frequency_range, pure_data_path, mixture_data_path
 
 class IR_DECONV:
-    """Class for generating functions to deconvolute spectra"""
+    """Class for generating functions used to to deconvolute spectra"""
     def __init__(self, frequency_range, pure_data_path):
-        """ Initialize a model object.
-
+        """ 
         Parameters
         ----------
-        frequency_range : numpy array
-            frequencies over which to project the intensities
+        frequency_range : numpy.narray
+            Frequencies over which to project the intensities.
 
-        pure_data_path : string 
-            directory location where pure component spectra are stored 
+        pure_data_path : str
+            Directory location where pure component spectra are stored.
         
-        Instance variables created
-        _________
+        Attributes
+        ----------
+        NUM_TARGETS : int
+            Number of different pure commponent species.
+        PURE_DATA : list[numpy.ndarray]
+            Original values of the of the experimental pure-component spectra.
+            There is a separate numpy.ndarray for each pure-component. Each 
+            array has shape $(m+1)$x$n$ where $m$ is the number of spectra for a
+            pure component and $n$ is the number of discrete intensities
+            sampled by the spectrometer. nump.ndarray[0] corresponds to the
+            frequencies over which the intensities are measured.
+        PURE_CONCENTRATIONS : list[numpy.ndarray]
+            Concentrations (M) for each pure-component solution measured. There
+            is a separate numpy.ndarry for each experimental pure-component
+            and each array is of length $m$.
+        PURE_FILES : list[str]
+            Location to each file in pure_data_path.
+        FREQUENCY_RANGE : numpy.ndarray
+            Numpy array of frequencies to project each spectra onto.
+        NUM_PURE_SPECTRA : list[int]
+            Number of spectra for each pure-component.
+        PURE_STANDARDIZED : list[numpy.ndarray]
+            List containing standardized sets of pure spectra where each set
+            of spectra is represented by a $m$x$n$ array where $m$
+            is the the number of spectra for each pure-componet species and $n$
+            is the length of FREQUENCY_RANGE.
         """
         PURE_CONCENTRATIONS = []
         PURE_DATA = []
@@ -54,75 +82,89 @@ class IR_DECONV:
             PURE_CONCENTRATIONS.append(concentration)
             data = np.loadtxt(pure_data_path + component, delimiter=',', skiprows=1).T
             PURE_DATA.append(data)
-        NUM_CONCENTRATIONS = [len(i) for i in PURE_CONCENTRATIONS]
+        NUM_PURE_SPECTRA = [len(i) for i in PURE_CONCENTRATIONS]
         self.NUM_TARGETS = len(PURE_FILES)
         self.PURE_DATA = PURE_DATA
         self.PURE_CONCENTRATIONS = PURE_CONCENTRATIONS
         self.PURE_FILES = PURE_FILES
         self.FREQUENCY_RANGE = frequency_range
-        self.NUM_CONCENTRATIONS = NUM_CONCENTRATIONS
+        self.NUM_PURE_SPECTRA = NUM_PURE_SPECTRA
         self.PURE_STANDARDIZED = self.standardize_spectra(PURE_DATA)
     
     def _get_pure_single_spectra(self):
         """
         Returns the pure spectra and concentrations in a format X and y, respectively,
         where X is all spectra and y is the corresponding concentration vectors.    
-        
-        Instance Variables
-        ------------------
-        NUM_TARGETS (int):
-           The number of pure components the deconvolution model is trained on
-    
-        FREQUENCY_RANGE (numpy.array):
-           The frequency range to project the spectral intensities onto
-    
-    
+           
         Returns
         -------
-    
-        X (numpy.array):
-            array of concatenated pure component spectra of dimensions mxn where m is
-            the number of spectra and n is the number of discrete frequencies
+        X : numpy.ndarray
+            Array of concatenated pure-component spectra of dimensions $m$x$n$ 
+            where $m$ is the number of spectra and $n$ is the number of
+            discrete frequencies
         
-        Notes
-        -----
+        y : numpy.ndarray
+            Array of concatenated pure-component concentrations of dimensions
+            $m$x$n$ where $m$ is the number of spectra and $n$ the number of
+            pure-component species.
         """
         NUM_TARGETS = self.NUM_TARGETS
         FREQUENCY_RANGE = self.FREQUENCY_RANGE
         PURE_STANDARDIZED = self.PURE_STANDARDIZED
         PURE_CONCENTRATIONS = self.PURE_CONCENTRATIONS
-        NUM_CONCENTRATIONS = self.NUM_CONCENTRATIONS
-        X = np.zeros((np.sum(NUM_CONCENTRATIONS),FREQUENCY_RANGE.size))
-        y = np.zeros((np.sum(NUM_CONCENTRATIONS),NUM_TARGETS))
+        NUM_PURE_SPECTRA = self.NUM_PURE_SPECTRA
+        X = np.zeros((np.sum(NUM_PURE_SPECTRA),FREQUENCY_RANGE.size))
+        y = np.zeros((np.sum(NUM_PURE_SPECTRA),NUM_TARGETS))
         for i in range(NUM_TARGETS):
-            y[np.sum(NUM_CONCENTRATIONS[0:i],dtype='int'):np.sum(NUM_CONCENTRATIONS[0:i+1],dtype='int'),i] = PURE_CONCENTRATIONS[i]
-            X[np.sum(NUM_CONCENTRATIONS[0:i],dtype='int'):np.sum(NUM_CONCENTRATIONS[0:i+1],dtype='int')] = PURE_STANDARDIZED[i]
+            y[np.sum(NUM_PURE_SPECTRA[0:i],dtype='int'):np.sum(NUM_PURE_SPECTRA[0:i+1],dtype='int'),i] = PURE_CONCENTRATIONS[i]
+            X[np.sum(NUM_PURE_SPECTRA[0:i],dtype='int'):np.sum(NUM_PURE_SPECTRA[0:i+1],dtype='int')] = PURE_STANDARDIZED[i]
         return X, y
                
     def standardize_spectra(self, DATA):
         """
-        Standardize spectra to the same frequency discritization
+        Returns standardize spectra by projecting the intensities onto the same
+        set of frequencies.
+        
+        Parameters
+        ----------
+        Data : list[numpy.ndarray] or numpy.ndarray
+            Spectra to be standardized. Must contain the experimental
+            frequencies of the spectra to be standardized as the first entry
+            of each ndarry and all following entries are the spectra.
+            Each ndarray should there for be of shape (>1,n) where n is the
+            number of frequencies sampled by the spectrometer.
+           
+        Returns
+        -------
+        STANDARDIZED_SPECTRA : list[numpy.ndarray]
+            List containing standardized sets of spectra in DATA projected
+            onto FREQUENCY_RANGE.
         """
         FREQUENCY_RANGE = self.FREQUENCY_RANGE
         if len(DATA[0].shape) == 1:
-            DATA = [DATA]
+            DATA = [np.copy(DATA)]
         NUM_TARGETS = len(DATA)
-        NUM_CONCENTRATIONS = [len(i)-1 for i in DATA]
+        NUM_SPECTRA = [len(i)-1 for i in DATA]
         STANDARDIZED_SPECTRA = []
         for i in range(NUM_TARGETS):
-            if NUM_CONCENTRATIONS[i] == 1:
+            if NUM_SPECTRA[i] == 1:
                 STANDARDIZED_SPECTRA.append(np.zeros(FREQUENCY_RANGE.size))
                 STANDARDIZED_SPECTRA[i] = np.interp(FREQUENCY_RANGE, DATA[i][0], DATA[i][1], left=None, right=None, period=None)
             else:
-                STANDARDIZED_SPECTRA.append(np.zeros((NUM_CONCENTRATIONS[i],FREQUENCY_RANGE.size)))
-                for ii in range(NUM_CONCENTRATIONS[i]):
+                STANDARDIZED_SPECTRA.append(np.zeros((NUM_SPECTRA[i],FREQUENCY_RANGE.size)))
+                for ii in range(NUM_SPECTRA[i]):
                     STANDARDIZED_SPECTRA[i][ii] = np.interp(FREQUENCY_RANGE, DATA[i][0], DATA[i][ii+1], left=None, right=None, period=None)
-        return np.array(STANDARDIZED_SPECTRA)
+        return STANDARDIZED_SPECTRA
 
     def _get_concentrations_2_pure_spectra(self):
         """
-        Get regressed parameters for computing pure component spectra from individual concentration
-        and coefficients F(concentration) which are used in the regression
+        Returns regressed parameters for computing pure component spectra 
+        from individual concentrations
+                  
+        Returns
+        -------
+        CONCENTRATIONS_2_PURE_SPECTRA : list[numpy.ndarray]
+            List of parameters to estimate pure-spectra given its concentration.
         """
         NUM_TARGETS = self.NUM_TARGETS
         PURE_SPECTRA = self.PURE_STANDARDIZED
@@ -139,8 +181,20 @@ class IR_DECONV:
                
     def _get_PC_loadings(self,NUM_PCs):
         """
-        Get regressed parameters for computing mixed spectra given individual conentrations.
-        Used in regressing concentration given the mixed spectra.
+        Returns principal component loadings after performing SVD on the
+        matrix of pure spectra.
+        
+        Parameters
+        ----------
+        NUM_PCs : int
+            The number of principal components of the spectra to keep.
+                  
+        Returns
+        -------
+        PC_loadings : numpy.ndarray
+            The first loadings of the first $N$ principal components where $N$
+            is equal to NUM_PCs.
+        
         """
         _get_pure_single_spectra = self._get_pure_single_spectra
         pure_spectra, concentrations  = _get_pure_single_spectra()
@@ -150,21 +204,52 @@ class IR_DECONV:
     
     def _get_PCs_and_regressors(self,NUM_PCs):
         """
-        Get regressed parameters for computing mixed spectra given individual conentrations.
-        Used in regressing concentration given the mixed spectra.
+        Returns principal component loadings of the spectra as well as the
+        matrix that multiplies the principal components of a given mixed
+        spectra to return.
+                  
+        Parameters
+        ----------
+        NUM_PCs : int
+            The number of principal components of the spectra to keep.
+        
+        Returns
+        -------
+        PC_loadings : numpy.ndarray
+            The first loadings of the first $N$ principal components where $N$
+            is equal to the number of pure-component species on which model is
+            trained.
+            
+        PCs_2_concentrations : numpy.ndarray
+            Regressed matrix to compute concentrations given the principal
+            components of a mixed spectra.
+        
         """
         _get_pure_single_spectra = self._get_pure_single_spectra
         _get_PC_loadings = self._get_PC_loadings
         pure_spectra, concentrations  = _get_pure_single_spectra()
-        pca_components = _get_PC_loadings(NUM_PCs)
-        PCs = np.dot(pure_spectra,pca_components.T)
+        pca_loadings = _get_PC_loadings(NUM_PCs)
+        PCs = np.dot(pure_spectra,pca_loadings.T)
         PCs_2_concentrations, res, rank, s = np.linalg.lstsq(PCs,concentrations,rcond=None)
-        return pca_components, PCs_2_concentrations
+        return pca_loadings, PCs_2_concentrations
     
     def _get_concentration_coefficients(self,concentrations):
         """
-        Get coefficients used in computing the individual spectra given their pure component conentrations.
-        Also used in regressing paratmers for computing pure component spectra.
+        Get coefficients used in computing the individual spectra given 
+        their pure component conentrations. Also used in regressing parameters
+        for computing pure component spectra.
+        
+        Parameters
+        ----------
+        concentrations : float, np.ndarray, or list
+            The concentration(s) whose pure-component spectra must be computed
+        
+        Returns
+        -------
+        concentration_coefficients : numpy.ndarray
+            set of coefficients for computing pure-component spectra given
+            the concentration of that pure-component
+        
         """
         concentration_coefficients = np.concatenate((np.ones_like(concentrations).reshape(-1,1), concentrations.reshape(-1,1), concentrations.reshape(-1,1)**2, concentrations.reshape(-1,1)**3),axis=1)            
         return concentration_coefficients
@@ -343,6 +428,7 @@ class IR_Results(IR_DECONV):
         return np.array(y_pred-y_true)[np.argmax(np.abs(y_pred-y_true))]
     
     def get_predictions(self, spectra):
+        spectra = np.copy(spectra)
         PCs_2_concentrations = self.PCs_2_concentrations
         pca_components = self.pca_components
         PCs = np.dot(spectra,pca_components.T)  
@@ -350,6 +436,7 @@ class IR_Results(IR_DECONV):
         return predictions
     
     def get_95PI(self, spectra):
+        spectra = np.copy(spectra)
         pure_spectra, pure_concentrations  = self._get_pure_single_spectra()
         pca_components = self.pca_components
         y_fit = self.get_predictions(spectra=pure_spectra)
