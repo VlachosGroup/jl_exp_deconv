@@ -148,30 +148,35 @@
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">pkg_resources</span>
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">due</span> <span class="k">import</span> <span class="n">due</span><span class="p">,</span> <span class="n">Doi</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.due</span> <span class="k">import</span> <span class="n">due</span><span class="p">,</span> <span class="n">Doi</span>
-
-<span class="c1">#__all__ = [&quot;Model&quot;, &quot;Fit&quot;, &quot;opt_err_func&quot;, &quot;transform_data&quot;, &quot;cumgauss&quot;]</span>
-
-
-<span class="c1"># Use duecredit (duecredit.org) to provide a citation to relevant work to</span>
-<span class="c1"># be cited. This does nothing, unless the user has duecredit installed,</span>
-<span class="c1"># And calls this with duecredit (as in `python -m duecredit script.py`):</span>
-<span class="n">due</span><span class="o">.</span><span class="n">cite</span><span class="p">(</span><span class="n">Doi</span><span class="p">(</span><span class="s2">&quot;10.1167/13.9.30&quot;</span><span class="p">),</span>
-         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Template project for small scientific Python projects&quot;</span><span class="p">,</span>
-         <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;reference-implementation&quot;</span><span class="p">],</span>
-         <span class="n">path</span><span class="o">=</span><span class="s1">&#39;jl_exp_deconv&#39;</span><span class="p">)</span>
+<span class="c1">#if __name__ == &#39;__main__&#39;:</span>
+<span class="c1">#    from due import due, Doi</span>
+<span class="c1">#else:</span>
+<span class="c1">#    from .due import due, Doi</span>
 
 <span class="c1">#default values</span>
 <span class="n">data_path</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;data/&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="get_defaults"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.get_defaults">[docs]</a><span class="k">def</span> <span class="nf">get_defaults</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns default frequencies to project intensities onto as well as default</span>
+<span class="sd">    paths for locations of the pure and mixture spectroscopic data.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    frequency_range: numpy.ndarray</span>
+<span class="sd">        Frequencies over which to project the intensities.</span>
+<span class="sd">    </span>
+<span class="sd">    pure_data_path : str</span>
+<span class="sd">        Directory location where pure-component spectra are stored.</span>
+<span class="sd">        </span>
+<span class="sd">    mixture_data_path : str</span>
+<span class="sd">        Directory location where mixed-component spectra are stored.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pure_data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;pure_components/&#39;</span><span class="p">)</span>
     <span class="n">mixture_data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;mixed_components/&#39;</span><span class="p">)</span>
     <span class="n">frequency_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">850</span><span class="p">,</span><span class="mi">1850</span><span class="p">,</span><span class="n">num</span><span class="o">=</span><span class="mi">501</span><span class="p">,</span><span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">frequency_range</span><span class="p">,</span> <span class="n">pure_data_path</span><span class="p">,</span> <span class="n">mixture_data_path</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">frequency_range</span><span class="p">,</span> <span class="n">pure_data_path</span><span class="p">,</span> <span class="n">mixture_data_path</span></div>
 
 <div class="viewcode-block" id="IR_DECONV"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_DECONV">[docs]</a><span class="k">class</span> <span class="nc">IR_DECONV</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Class for generating functions used to to deconvolute spectra&quot;&quot;&quot;</span>
@@ -192,35 +197,47 @@
 <span class="sd">        PURE_DATA : list[numpy.ndarray]</span>
 <span class="sd">            Original values of the of the experimental pure-component spectra.</span>
 <span class="sd">            There is a separate numpy.ndarray for each pure-component. Each </span>
-<span class="sd">            array has shape $m+1$x$n$ where $m$ is the number of spectra for a</span>
+<span class="sd">            array has shape $(m+1)$x$n$ where $m$ is the number of spectra for a</span>
 <span class="sd">            pure component and $n$ is the number of discrete intensities</span>
 <span class="sd">            sampled by the spectrometer. nump.ndarray[0] corresponds to the</span>
 <span class="sd">            frequencies over which the intensities are measured.</span>
+<span class="sd">            </span>
 <span class="sd">        PURE_CONCENTRATIONS : list[numpy.ndarray]</span>
 <span class="sd">            Concentrations (M) for each pure-component solution measured. There</span>
 <span class="sd">            is a separate numpy.ndarry for each experimental pure-component</span>
 <span class="sd">            and each array is of length $m$.</span>
+<span class="sd">            </span>
 <span class="sd">        PURE_FILES : list[str]</span>
 <span class="sd">            Location to each file in pure_data_path.</span>
+<span class="sd">            </span>
 <span class="sd">        FREQUENCY_RANGE : numpy.ndarray</span>
 <span class="sd">            Numpy array of frequencies to project each spectra onto.</span>
+<span class="sd">            </span>
 <span class="sd">        NUM_PURE_SPECTRA : list[int]</span>
 <span class="sd">            Number of spectra for each pure-component.</span>
+<span class="sd">            </span>
 <span class="sd">        PURE_STANDARDIZED : list[numpy.ndarray]</span>
-<span class="sd">            Listing containing standardized sets of pure spectra where each set</span>
+<span class="sd">            List containing standardized sets of pure spectra where each set</span>
 <span class="sd">            of spectra is represented by a $m$x$n$ array where $m$</span>
 <span class="sd">            is the the number of spectra for each pure-componet species and $n$</span>
 <span class="sd">            is the length of FREQUENCY_RANGE.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">PURE_CONCENTRATIONS</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">PURE_DATA</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">PURE_FILES</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">pure_data_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">pure_data_path</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">PURE_FILES</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">pure_data_path</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pure_data_path</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">PURE_FILES</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">pure_data_path</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">PURE_FILES</span><span class="p">:</span>
-            <span class="n">concentration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">pure_data_path</span> <span class="o">+</span> <span class="n">component</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span>\
-                                  <span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">usecols</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span><span class="n">max_rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-            <span class="n">PURE_CONCENTRATIONS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">concentration</span><span class="p">)</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">pure_data_path</span> <span class="o">+</span> <span class="n">component</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">pure_data_path</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pure_data_path</span><span class="p">,</span><span class="n">component</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pure_data_path</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">file_path</span> <span class="o">=</span> <span class="n">pure_data_path</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
             <span class="n">PURE_DATA</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">concentrations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span>\
+                                  <span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">usecols</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">max_rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">PURE_CONCENTRATIONS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">concentrations</span><span class="p">)</span>
         <span class="n">NUM_PURE_SPECTRA</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">PURE_CONCENTRATIONS</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">NUM_TARGETS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">PURE_FILES</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">PURE_DATA</span> <span class="o">=</span> <span class="n">PURE_DATA</span>
@@ -261,28 +278,49 @@
                
 <div class="viewcode-block" id="IR_DECONV.standardize_spectra"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_DECONV.standardize_spectra">[docs]</a>    <span class="k">def</span> <span class="nf">standardize_spectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">DATA</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Standardize spectra to the same frequency discritization</span>
+<span class="sd">        Returns standardize spectra by projecting the intensities onto the same</span>
+<span class="sd">        set of frequencies.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        DATA : list[numpy.ndarray] or numpy.ndarray</span>
+<span class="sd">            Spectra to be standardized. Must contain the experimental</span>
+<span class="sd">            frequencies of the spectra to be standardized as the first entry</span>
+<span class="sd">            of each ndarry and all following entries are the spectra.</span>
+<span class="sd">            Each ndarray should there for be of shape (&gt;1,n) where n is the</span>
+<span class="sd">            number of frequencies sampled by the spectrometer.</span>
+<span class="sd">           </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        STANDARDIZED_SPECTRA : list[numpy.ndarray]</span>
+<span class="sd">            List containing standardized sets of spectra in DATA projected</span>
+<span class="sd">            onto FREQUENCY_RANGE.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">FREQUENCY_RANGE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FREQUENCY_RANGE</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">DATA</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">DATA</span> <span class="o">=</span> <span class="p">[</span><span class="n">DATA</span><span class="p">]</span>
+            <span class="n">DATA</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">DATA</span><span class="p">)]</span>
         <span class="n">NUM_TARGETS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">DATA</span><span class="p">)</span>
-        <span class="n">NUM_PURE_SPECTRA</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">DATA</span><span class="p">]</span>
+        <span class="n">NUM_SPECTRA</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">DATA</span><span class="p">]</span>
         <span class="n">STANDARDIZED_SPECTRA</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_TARGETS</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">NUM_PURE_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">NUM_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">STANDARDIZED_SPECTRA</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">FREQUENCY_RANGE</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
                 <span class="n">STANDARDIZED_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">FREQUENCY_RANGE</span><span class="p">,</span> <span class="n">DATA</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">DATA</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">STANDARDIZED_SPECTRA</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">NUM_PURE_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">FREQUENCY_RANGE</span><span class="o">.</span><span class="n">size</span><span class="p">)))</span>
-                <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_PURE_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+                <span class="n">STANDARDIZED_SPECTRA</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">NUM_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">FREQUENCY_RANGE</span><span class="o">.</span><span class="n">size</span><span class="p">)))</span>
+                <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
                     <span class="n">STANDARDIZED_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">FREQUENCY_RANGE</span><span class="p">,</span> <span class="n">DATA</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">DATA</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">STANDARDIZED_SPECTRA</span></div>
 
 <div class="viewcode-block" id="IR_DECONV._get_concentrations_2_pure_spectra"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_DECONV._get_concentrations_2_pure_spectra">[docs]</a>    <span class="k">def</span> <span class="nf">_get_concentrations_2_pure_spectra</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get regressed parameters for computing pure component spectra from individual concentration</span>
-<span class="sd">        and coefficients F(concentration) which are used in the regression</span>
+<span class="sd">        Returns regressed parameters for computing pure component spectra </span>
+<span class="sd">        from individual concentrations</span>
+<span class="sd">                  </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        CONCENTRATIONS_2_PURE_SPECTRA : list[numpy.ndarray]</span>
+<span class="sd">            List of parameters to estimate pure-spectra given its concentration.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">NUM_TARGETS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NUM_TARGETS</span>
         <span class="n">PURE_SPECTRA</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PURE_STANDARDIZED</span>
@@ -299,8 +337,20 @@
                
 <div class="viewcode-block" id="IR_DECONV._get_PC_loadings"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_DECONV._get_PC_loadings">[docs]</a>    <span class="k">def</span> <span class="nf">_get_PC_loadings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">NUM_PCs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get regressed parameters for computing mixed spectra given individual conentrations.</span>
-<span class="sd">        Used in regressing concentration given the mixed spectra.</span>
+<span class="sd">        Returns principal component loadings after performing SVD on the</span>
+<span class="sd">        matrix of pure spectra.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        NUM_PCs : int</span>
+<span class="sd">            The number of principal components of the spectra to keep.</span>
+<span class="sd">                  </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        PC_loadings : numpy.ndarray</span>
+<span class="sd">            The first loadings of the first $N$ principal components where $N$</span>
+<span class="sd">            is equal to NUM_PCs.</span>
+<span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_get_pure_single_spectra</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pure_single_spectra</span>
         <span class="n">pure_spectra</span><span class="p">,</span> <span class="n">concentrations</span>  <span class="o">=</span> <span class="n">_get_pure_single_spectra</span><span class="p">()</span>
@@ -310,42 +360,140 @@
     
 <div class="viewcode-block" id="IR_DECONV._get_PCs_and_regressors"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_DECONV._get_PCs_and_regressors">[docs]</a>    <span class="k">def</span> <span class="nf">_get_PCs_and_regressors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">NUM_PCs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get regressed parameters for computing mixed spectra given individual conentrations.</span>
-<span class="sd">        Used in regressing concentration given the mixed spectra.</span>
+<span class="sd">        Returns principal component loadings of the spectra as well as the</span>
+<span class="sd">        matrix that multiplies the principal components of a given mixed</span>
+<span class="sd">        spectra to return.</span>
+<span class="sd">                  </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        NUM_PCs : int</span>
+<span class="sd">            The number of principal components of the spectra to keep.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        PC_loadings : numpy.ndarray</span>
+<span class="sd">            The first loadings of the first $N$ principal components where $N$</span>
+<span class="sd">            is equal to the number of pure-component species on which model is</span>
+<span class="sd">            trained.</span>
+<span class="sd">            </span>
+<span class="sd">        PCs_2_concentrations : numpy.ndarray</span>
+<span class="sd">            Regressed matrix to compute concentrations given the principal</span>
+<span class="sd">            components of a mixed spectra.</span>
+<span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_get_pure_single_spectra</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pure_single_spectra</span>
         <span class="n">_get_PC_loadings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_PC_loadings</span>
         <span class="n">pure_spectra</span><span class="p">,</span> <span class="n">concentrations</span>  <span class="o">=</span> <span class="n">_get_pure_single_spectra</span><span class="p">()</span>
-        <span class="n">pca_components</span> <span class="o">=</span> <span class="n">_get_PC_loadings</span><span class="p">(</span><span class="n">NUM_PCs</span><span class="p">)</span>
-        <span class="n">PCs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">pure_spectra</span><span class="p">,</span><span class="n">pca_components</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">pca_loadings</span> <span class="o">=</span> <span class="n">_get_PC_loadings</span><span class="p">(</span><span class="n">NUM_PCs</span><span class="p">)</span>
+        <span class="n">PCs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">pure_spectra</span><span class="p">,</span><span class="n">pca_loadings</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="n">PCs_2_concentrations</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">PCs</span><span class="p">,</span><span class="n">concentrations</span><span class="p">,</span><span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">pca_components</span><span class="p">,</span> <span class="n">PCs_2_concentrations</span></div>
+        <span class="k">return</span> <span class="n">pca_loadings</span><span class="p">,</span> <span class="n">PCs_2_concentrations</span></div>
     
 <div class="viewcode-block" id="IR_DECONV._get_concentration_coefficients"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_DECONV._get_concentration_coefficients">[docs]</a>    <span class="k">def</span> <span class="nf">_get_concentration_coefficients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">concentrations</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get coefficients used in computing the individual spectra given their pure component conentrations.</span>
-<span class="sd">        Also used in regressing paratmers for computing pure component spectra.</span>
+<span class="sd">        Get coefficients used in computing the individual spectra given </span>
+<span class="sd">        their pure component conentrations. Also used in regressing parameters</span>
+<span class="sd">        for computing pure component spectra.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        concentrations : float, np.ndarray, or list</span>
+<span class="sd">            The concentration(s) whose pure-component spectra must be computed</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        concentration_coefficients : numpy.ndarray</span>
+<span class="sd">            set of coefficients for computing pure-component spectra given</span>
+<span class="sd">            the concentration of that pure-component</span>
+<span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">concentration_coefficients</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">concentrations</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">concentrations</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">concentrations</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">concentrations</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>            
         <span class="k">return</span> <span class="n">concentration_coefficients</span></div></div>
             
 
 <div class="viewcode-block" id="IR_Results"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_Results">[docs]</a><span class="k">class</span> <span class="nc">IR_Results</span><span class="p">(</span><span class="n">IR_DECONV</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for deconvoluting experimental spectra whose intensity increaeses</span>
+<span class="sd">       monotonically with concentration.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NUM_PCs</span><span class="p">,</span> <span class="n">frequency_range</span><span class="p">,</span> <span class="n">pure_data_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        NUM_PCs : int</span>
+<span class="sd">            The number of principal components of the spectra to keep.</span>
+<span class="sd">        </span>
+<span class="sd">        frequency_range : numpy.narray</span>
+<span class="sd">            Frequencies over which to project the intensities.</span>
+
+<span class="sd">        pure_data_path : str</span>
+<span class="sd">            Directory location where pure component spectra are stored.</span>
+<span class="sd">        </span>
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        PC_loadings : numpy.ndarray</span>
+<span class="sd">            The first loadings of the first $N$ principal components where $N$</span>
+<span class="sd">            is equal to the number of pure-component species on which model is</span>
+<span class="sd">            trained.</span>
+<span class="sd">            </span>
+<span class="sd">        PCs_2_concentrations : numpy.ndarray</span>
+<span class="sd">            Regressed matrix to compute concentrations given the principal</span>
+<span class="sd">            components of a mixed spectra.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">IR_DECONV</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frequency_range</span><span class="p">,</span> <span class="n">pure_data_path</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pca_components</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PCs_2_concentrations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_PCs_and_regressors</span><span class="p">(</span><span class="n">NUM_PCs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pca_loadings</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PCs_2_concentrations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_PCs_and_regressors</span><span class="p">(</span><span class="n">NUM_PCs</span><span class="p">)</span>
         
-<div class="viewcode-block" id="IR_Results.get_mixture_figures"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_Results.get_mixture_figures">[docs]</a>    <span class="k">def</span> <span class="nf">get_mixture_figures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">figure_directory</span><span class="p">,</span> <span class="n">mixture_data_path</span><span class="p">):</span>
+<div class="viewcode-block" id="IR_Results.get_mixture_data"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_Results.get_mixture_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_mixture_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mixture_data_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the mixture data need to deconvolute</span>
+<span class="sd">                  </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            </span>
+<span class="sd">        mixture_data_path : str</span>
+<span class="sd">            Directory or file where mixture data is stored.</span>
+<span class="sd">            </span>
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        PURE_DATA_IN_MIXTURE : numpy.ndarray</span>
+<span class="sd">            The first loadings of the first $N$ principal components where $N$</span>
+<span class="sd">            is equal to the number of pure-component species on which model is</span>
+<span class="sd">            trained.</span>
+<span class="sd">            </span>
+<span class="sd">        PCs_2_concentrations : numpy.ndarray</span>
+<span class="sd">            Regressed matrix to compute concentrations given the principal</span>
+<span class="sd">            components of a mixed spectra.</span>
+<span class="sd">            </span>
+<span class="sd">        self.PURE_DATA_IN_MIXTURE = PURE_DATA_IN_MIXTURE</span>
+<span class="sd">        self.MIXTURE_DATA = MIXTURE_DATA</span>
+<span class="sd">        self.MIXTURE_CONCENTRATIONS = MIXTURE_CONCENTRATIONS</span>
+<span class="sd">        self.MIXTURE_FILES = MIXTURE_FILES</span>
+<span class="sd">        self.MIXTURE_NAMES = MIXTURE_NAMES</span>
+<span class="sd">        self.NUM_MIXED = len(MIXTURE_FILES)</span>
+<span class="sd">        self.MIXTURE_STANDARDIZED = self.standardize_spectra(MIXTURE_DATA) </span>
+<span class="sd">        self.PURE_IN_MIXTURE_STANDARDIZED = self.standardize_spectra(PURE_DATA_IN_MIXTURE)</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        MIXTURE_STANDARDIZED : numpy.ndarray</span>
+<span class="sd">            Standardized mixed spectra contained in file(s)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">PURE_FILES</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PURE_FILES</span>
+        <span class="n">NUM_TARGETS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NUM_TARGETS</span>
         <span class="n">MIXTURE_CONCENTRATIONS</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">MIXTURE_NAMES</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">MIXTURE_DATA</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">PURE_DATA_IN_MIXTURE</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">MIXTURE_FILES</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">mixture_data_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">mixture_data_path</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">MIXTURE_FILES</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">mixture_data_path</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">mixture_data_path</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">MIXTURE_FILES</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">mixture_data_path</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">MIXTURE_FILES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">mixture_data_path</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mixture_data_path</span><span class="p">,</span><span class="n">file</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">mixture_data_path</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">file_path</span> <span class="o">=</span> <span class="n">mixture_data_path</span>
             <span class="n">index_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">PURE_FILES</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-            <span class="n">component</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">mixture_data_path</span> <span class="o">+</span> <span class="n">file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span>\
-                                  <span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">usecols</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span><span class="n">max_rows</span><span class="o">=</span><span class="mi">1</span>\
+            <span class="n">component</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span>\
+                                  <span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">usecols</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="o">+</span><span class="n">NUM_TARGETS</span><span class="p">),</span><span class="n">max_rows</span><span class="o">=</span><span class="mi">1</span>\
                                   <span class="p">,</span><span class="n">autostrip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span><span class="n">replace_space</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
                 <span class="n">component</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">component</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
@@ -353,22 +501,41 @@
                     <span class="k">if</span> <span class="n">component</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">ii</span><span class="p">:</span>
                         <span class="n">index_list</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
             <span class="n">MIXTURE_NAMES</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">component</span><span class="p">[</span><span class="n">index_list</span><span class="p">])</span>
-            <span class="n">individual_spectra</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">mixture_data_path</span> <span class="o">+</span> <span class="n">file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">individual_spectra</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="o">+</span><span class="n">NUM_TARGETS</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="o">.</span><span class="n">T</span>
             <span class="n">PURE_DATA_IN_MIXTURE</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">individual_spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">]]),</span><span class="n">individual_spectra</span><span class="p">[</span><span class="mi">1</span><span class="p">:][</span><span class="n">index_list</span><span class="p">]),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-            <span class="n">concentration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">mixture_data_path</span> <span class="o">+</span> <span class="n">file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span>\
-                                  <span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">usecols</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span><span class="n">max_rows</span><span class="o">=</span><span class="mi">1</span>\
+            <span class="n">concentration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span>\
+                                  <span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">usecols</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="o">+</span><span class="n">NUM_TARGETS</span><span class="p">),</span><span class="n">max_rows</span><span class="o">=</span><span class="mi">1</span>\
                                   <span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
             <span class="n">MIXTURE_CONCENTRATIONS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">concentration</span><span class="p">[</span><span class="n">index_list</span><span class="p">])</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">mixture_data_path</span> <span class="o">+</span> <span class="n">file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
             <span class="n">MIXTURE_DATA</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">MIXTURE_STANDARDIZED</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardize_spectra</span><span class="p">(</span><span class="n">MIXTURE_DATA</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">PURE_DATA_IN_MIXTURE</span> <span class="o">=</span> <span class="n">PURE_DATA_IN_MIXTURE</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">MIXTURE_DATA</span> <span class="o">=</span> <span class="n">MIXTURE_DATA</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">MIXTURE_CONCENTRATIONS</span> <span class="o">=</span> <span class="n">MIXTURE_CONCENTRATIONS</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">MIXTURE_FILES</span> <span class="o">=</span> <span class="n">MIXTURE_FILES</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">MIXTURE_NAMES</span> <span class="o">=</span> <span class="n">MIXTURE_NAMES</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">NUM_MIXED</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">MIXTURE_FILES</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">MIXTURE_STANDARDIZED</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardize_spectra</span><span class="p">(</span><span class="n">MIXTURE_DATA</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">MIXTURE_STANDARDIZED</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">MIXTURE_STANDARDIZED</span><span class="p">)</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">PURE_IN_MIXTURE_STANDARDIZED</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardize_spectra</span><span class="p">(</span><span class="n">PURE_DATA_IN_MIXTURE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">MIXTURE_STANDARDIZED</span></div>
+    
+<div class="viewcode-block" id="IR_Results.get_mixture_figures"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_Results.get_mixture_figures">[docs]</a>    <span class="k">def</span> <span class="nf">get_mixture_figures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">figure_directory</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns principal component loadings of the spectra as well as the</span>
+<span class="sd">        matrix that multiplies the principal components of a given mixed</span>
+<span class="sd">        spectra to return.</span>
+<span class="sd">                  </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        figure_directory : str</span>
+<span class="sd">            Directory where figures should be saved.</span>
+<span class="sd">                        </span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Figures describing the data        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_visualize_data</span><span class="p">(</span><span class="n">figure_directory</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_get_results</span><span class="p">(</span><span class="n">figure_directory</span><span class="p">)</span></div>
         
@@ -400,15 +567,21 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="n">PURE_FILES</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_TARGETS</span><span class="p">)]</span><span class="o">+</span><span class="p">[</span><span class="s1">&#39;Parity&#39;</span><span class="p">])</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Experimental Pure Component Intensities&#39;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Regressed Intensities&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">figure_directory</span><span class="o">+</span><span class="s1">&#39;/Regressed_vs_Experimental.png&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">figure_directory</span> <span class="o">==</span> <span class="s1">&#39;print&#39;</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">figure_directory</span><span class="o">+</span><span class="s1">&#39;/Regressed_vs_Experimental.png&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.2</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="n">dpi</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">MIXTURE_STANDARDIZED</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">MIXTURE_STANDARDIZED</span><span class="p">)),(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">MIXTURE_STANDARDIZED</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">MIXTURE_STANDARDIZED</span><span class="p">)),</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">MIXTURE_STANDARDIZED</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span><span class="n">pure_flattend</span><span class="p">,</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Mixture Intensities&#39;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Summed Pure</span><span class="se">\n</span><span class="s1"> Component Intensities&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">figure_directory</span><span class="o">+</span><span class="s1">&#39;/Summed_vs_Mixed.png&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+        <span class="k">if</span> <span class="n">figure_directory</span> <span class="o">==</span> <span class="s1">&#39;print&#39;</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">figure_directory</span><span class="o">+</span><span class="s1">&#39;/Summed_vs_Mixed.png&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
         
 <div class="viewcode-block" id="IR_Results.deconvolute_spectra"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_Results.deconvolute_spectra">[docs]</a>    <span class="k">def</span> <span class="nf">deconvolute_spectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectra</span><span class="p">):</span>
         <span class="n">NUM_TARGETS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NUM_TARGETS</span>
@@ -460,8 +633,11 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;RMSE of mixed prediction: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_rmse</span><span class="p">()))</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Max Error mixed prediction: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_max_error</span><span class="p">()))</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">figure_directory</span><span class="o">+</span><span class="s1">&#39;/Model_Validation.png&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">figure_directory</span> <span class="o">==</span> <span class="s1">&#39;print&#39;</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">figure_directory</span><span class="o">+</span><span class="s1">&#39;/Model_Validation.png&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_MIXED</span><span class="p">):</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">9.9</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="n">dpi</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
@@ -478,9 +654,12 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">MIXED_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">*</span><span class="mf">1.75</span><span class="p">])</span>
             <span class="c1">#plt.title(MIXTURE_FILES[i][:-4])</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">figure_directory</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">MIXTURE_FILES</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.png&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">figure_directory</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">MIXTURE_FILES</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">FREQUENCY_RANGE</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span><span class="n">MIXED_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>\
+            <span class="k">if</span> <span class="n">figure_directory</span> <span class="o">==</span> <span class="s1">&#39;print&#39;</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">figure_directory</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">MIXTURE_FILES</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.png&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">figure_directory</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">MIXTURE_FILES</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">FREQUENCY_RANGE</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span><span class="n">MIXED_SPECTRA</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>\
                        <span class="p">,</span><span class="n">deconvoluted_spectra</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">comparison_spectra</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>\
                        <span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;Frequency,Mixed_Spectra,&#39;</span><span class="o">+</span><span class="s1">&#39;_Deconvoluted,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">MIXTURE_NAMES</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>\
                        <span class="o">+</span><span class="s1">&#39;_Deconvoluted,&#39;</span><span class="o">+</span><span class="s1">&#39;_PURE_SPECTRA,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">MIXTURE_NAMES</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">+</span><span class="s1">&#39;_PURE_SPECTRA&#39;</span><span class="p">)</span></div>
@@ -505,30 +684,30 @@
 <div class="viewcode-block" id="IR_Results.get_predictions"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_Results.get_predictions">[docs]</a>    <span class="k">def</span> <span class="nf">get_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectra</span><span class="p">):</span>
         <span class="n">spectra</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">spectra</span><span class="p">)</span>
         <span class="n">PCs_2_concentrations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PCs_2_concentrations</span>
-        <span class="n">pca_components</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca_components</span>
-        <span class="n">PCs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">spectra</span><span class="p">,</span><span class="n">pca_components</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>  
+        <span class="n">pca_loadings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca_loadings</span>
+        <span class="n">PCs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">spectra</span><span class="p">,</span><span class="n">pca_loadings</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>  
         <span class="n">predictions</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">PCs</span><span class="p">,</span><span class="n">PCs_2_concentrations</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">predictions</span></div>
     
 <div class="viewcode-block" id="IR_Results.get_95PI"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.jl_exp_deconv.IR_Results.get_95PI">[docs]</a>    <span class="k">def</span> <span class="nf">get_95PI</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectra</span><span class="p">):</span>
         <span class="n">spectra</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">spectra</span><span class="p">)</span>
         <span class="n">pure_spectra</span><span class="p">,</span> <span class="n">pure_concentrations</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pure_single_spectra</span><span class="p">()</span>
-        <span class="n">pca_components</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca_components</span>
+        <span class="n">pca_loadings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca_loadings</span>
         <span class="n">y_fit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">(</span><span class="n">spectra</span><span class="o">=</span><span class="n">pure_spectra</span><span class="p">)</span>
         <span class="n">NUM_TARGETS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NUM_TARGETS</span>
-        <span class="n">Xnew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">spectra</span><span class="p">,</span><span class="n">pca_components</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-        <span class="n">Xfit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">pure_spectra</span><span class="p">,</span><span class="n">pca_components</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">Xnew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">spectra</span><span class="p">,</span><span class="n">pca_loadings</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">Xfit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">pure_spectra</span><span class="p">,</span><span class="n">pca_loadings</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="n">var_yfit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">NUM_TARGETS</span><span class="p">)</span>
         <span class="n">var_ynew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">spectra</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">NUM_TARGETS</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_TARGETS</span><span class="p">):</span>
-            <span class="n">var_yfit</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">pure_concentrations</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">y_fit</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">ddof</span><span class="o">=</span><span class="n">pca_components</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">var_yfit</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">pure_concentrations</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">y_fit</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">ddof</span><span class="o">=</span><span class="n">pca_loadings</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">var_estimators</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Xfit</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">Xfit</span><span class="p">))</span><span class="o">*</span><span class="n">var_yfit</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> 
             <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">spectra</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
                 <span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Xnew</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span><span class="n">var_estimators</span><span class="p">)</span>
                 <span class="n">x2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">Xnew</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">var_ynew</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_yfit</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">x2</span>
         
-        <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.025</span><span class="p">,</span><span class="n">y_fit</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">pca_components</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">var_ynew</span><span class="o">**</span><span class="mf">0.5</span></div></div>
+        <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.025</span><span class="p">,</span><span class="n">y_fit</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">pca_loadings</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">var_ynew</span><span class="o">**</span><span class="mf">0.5</span></div></div>
 </pre></div>
 
            </div>

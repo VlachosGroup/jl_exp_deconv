@@ -57,16 +57,21 @@ class IR_DECONV:
             pure component and $n$ is the number of discrete intensities
             sampled by the spectrometer. nump.ndarray[0] corresponds to the
             frequencies over which the intensities are measured.
+            
         PURE_CONCENTRATIONS : list[numpy.ndarray]
             Concentrations (M) for each pure-component solution measured. There
             is a separate numpy.ndarry for each experimental pure-component
             and each array is of length $m$.
+            
         PURE_FILES : list[str]
             Location to each file in pure_data_path.
+            
         FREQUENCY_RANGE : numpy.ndarray
             Numpy array of frequencies to project each spectra onto.
+            
         NUM_PURE_SPECTRA : list[int]
             Number of spectra for each pure-component.
+            
         PURE_STANDARDIZED : list[numpy.ndarray]
             List containing standardized sets of pure spectra where each set
             of spectra is represented by a $m$x$n$ array where $m$
@@ -75,13 +80,20 @@ class IR_DECONV:
         """
         PURE_CONCENTRATIONS = []
         PURE_DATA = []
-        PURE_FILES = os.listdir(pure_data_path)
+        if os.path.isdir(pure_data_path) == True:
+            PURE_FILES = os.listdir(pure_data_path)
+        elif os.path.isfile(pure_data_path) == True:
+            PURE_FILES = [os.path.basename(pure_data_path)]
         for component in PURE_FILES:
-            concentration = np.genfromtxt(pure_data_path + component, delimiter=','\
-                                  , skip_header=0,usecols=np.arange(1,8),max_rows=1,dtype=float)
-            PURE_CONCENTRATIONS.append(concentration)
-            data = np.loadtxt(pure_data_path + component, delimiter=',', skiprows=1).T
+            if os.path.isdir(pure_data_path) == True:
+                file_path = os.path.join(pure_data_path,component)
+            elif os.path.isfile(pure_data_path) == True:
+                file_path = pure_data_path
+            data = np.loadtxt(file_path, delimiter=',', skiprows=1).T
             PURE_DATA.append(data)
+            concentrations = np.genfromtxt(file_path, delimiter=','\
+                                  , skip_header=0,usecols=np.arange(1,data.shape[0]),max_rows=1,dtype=float)
+            PURE_CONCENTRATIONS.append(concentrations)
         NUM_PURE_SPECTRA = [len(i) for i in PURE_CONCENTRATIONS]
         self.NUM_TARGETS = len(PURE_FILES)
         self.PURE_DATA = PURE_DATA
@@ -127,7 +139,7 @@ class IR_DECONV:
         
         Parameters
         ----------
-        Data : list[numpy.ndarray] or numpy.ndarray
+        DATA : list[numpy.ndarray] or numpy.ndarray
             Spectra to be standardized. Must contain the experimental
             frequencies of the spectra to be standardized as the first entry
             of each ndarry and all following entries are the spectra.
@@ -256,36 +268,56 @@ class IR_DECONV:
             
 
 class IR_Results(IR_DECONV):
+    """Class for deconvoluting experimental spectra whose intensity increaeses
+       monotonically with concentration."""
     def __init__(self, NUM_PCs, frequency_range, pure_data_path):
-        IR_DECONV.__init__(self, frequency_range, pure_data_path)
-        self.pca_components, self.PCs_2_concentrations = self._get_PCs_and_regressors(NUM_PCs)
+        """ 
+        Parameters
+        ----------
+        NUM_PCs : int
+            The number of principal components of the spectra to keep.
         
-    def get_mixture_figures(self, figure_directory, mixture_data_path):
-        PURE_FILES = self.PURE_FILES
-        MIXTURE_CONCENTRATIONS = []
-        MIXTURE_NAMES = []
-        MIXTURE_DATA = []
-        PURE_DATA_IN_MIXTURE = []
-        MIXTURE_FILES = os.listdir(mixture_data_path)
-        for file in MIXTURE_FILES:
-            index_list = np.zeros(len(PURE_FILES),dtype=int)
-            component = np.genfromtxt(mixture_data_path + file, delimiter=','\
-                                  , skip_header=0,usecols=np.arange(2,6),max_rows=1\
-                                  ,autostrip=True,dtype=str,replace_space='_')
-            for i in range(component.size):
-                component[i] = component[i].replace(' ','_')
-                for count, ii in enumerate(PURE_FILES):
-                    if component[i] in ii:
-                        index_list[count] = i
-            MIXTURE_NAMES.append(component[index_list])
-            individual_spectra = np.loadtxt(mixture_data_path + file, delimiter=',', skiprows=2,usecols=[0]+np.arange(2,6).tolist()).T
-            PURE_DATA_IN_MIXTURE.append(np.concatenate((np.array([individual_spectra[0]]),individual_spectra[1:][index_list]),axis=0))
-            concentration = np.genfromtxt(mixture_data_path + file, delimiter=','\
-                                  , skip_header=1,usecols=np.arange(2,6),max_rows=1\
-                                  ,dtype=float)
-            MIXTURE_CONCENTRATIONS.append(concentration[index_list])
-            data = np.loadtxt(mixture_data_path + file, delimiter=',', skiprows=2,usecols=[0,1]).T
-            MIXTURE_DATA.append(data)
+        frequency_range : numpy.narray
+            Frequencies over which to project the intensities.
+
+        pure_data_path : str
+            Directory location where pure component spectra are stored.
+        
+        Attributes
+        ----------
+        PC_loadings : numpy.ndarray
+            The first loadings of the first $N$ principal components where $N$
+            is equal to the number of pure-component species on which model is
+            trained.
+            
+        PCs_2_concentrations : numpy.ndarray
+            Regressed matrix to compute concentrations given the principal
+            components of a mixed spectra.
+        """
+        IR_DECONV.__init__(self, frequency_range, pure_data_path)
+        self.pca_loadings, self.PCs_2_concentrations = self._get_PCs_and_regressors(NUM_PCs)
+        
+    def get_mixture_data(self, mixture_data_path):
+        """
+        Gets the mixture data need to deconvolute
+                  
+        Parameters
+        ----------
+            
+        mixture_data_path : str
+            Directory or file where mixture data is stored.
+            
+        Attributes
+        ----------
+        PURE_DATA_IN_MIXTURE : numpy.ndarray
+            The first loadings of the first $N$ principal components where $N$
+            is equal to the number of pure-component species on which model is
+            trained.
+            
+        PCs_2_concentrations : numpy.ndarray
+            Regressed matrix to compute concentrations given the principal
+            components of a mixed spectra.
+            
         self.PURE_DATA_IN_MIXTURE = PURE_DATA_IN_MIXTURE
         self.MIXTURE_DATA = MIXTURE_DATA
         self.MIXTURE_CONCENTRATIONS = MIXTURE_CONCENTRATIONS
@@ -294,6 +326,72 @@ class IR_Results(IR_DECONV):
         self.NUM_MIXED = len(MIXTURE_FILES)
         self.MIXTURE_STANDARDIZED = self.standardize_spectra(MIXTURE_DATA) 
         self.PURE_IN_MIXTURE_STANDARDIZED = self.standardize_spectra(PURE_DATA_IN_MIXTURE)
+        
+        Returns
+        -------
+        MIXTURE_STANDARDIZED : numpy.ndarray
+            Standardized mixed spectra contained in file(s)
+        """
+        PURE_FILES = self.PURE_FILES
+        NUM_TARGETS = self.NUM_TARGETS
+        MIXTURE_CONCENTRATIONS = []
+        MIXTURE_NAMES = []
+        MIXTURE_DATA = []
+        PURE_DATA_IN_MIXTURE = []
+        if os.path.isdir(mixture_data_path) == True:
+            MIXTURE_FILES = os.listdir(mixture_data_path)
+        elif os.path.isfile(mixture_data_path) == True:
+            MIXTURE_FILES = [os.path.basename(mixture_data_path)]
+        for file in MIXTURE_FILES:
+            if os.path.isdir(mixture_data_path) == True:
+                file_path = os.path.join(mixture_data_path,file)
+            elif os.path.isfile(mixture_data_path) == True:
+                file_path = mixture_data_path
+            index_list = np.zeros(len(PURE_FILES),dtype=int)
+            component = np.genfromtxt(file_path, delimiter=','\
+                                  , skip_header=0,usecols=np.arange(2,2+NUM_TARGETS),max_rows=1\
+                                  ,autostrip=True,dtype=str,replace_space='_')
+            for i in range(component.size):
+                component[i] = component[i].replace(' ','_')
+                for count, ii in enumerate(PURE_FILES):
+                    if component[i] in ii:
+                        index_list[count] = i
+            MIXTURE_NAMES.append(component[index_list])
+            individual_spectra = np.loadtxt(file_path, delimiter=',', skiprows=2,usecols=[0]+np.arange(2,2+NUM_TARGETS).tolist()).T
+            PURE_DATA_IN_MIXTURE.append(np.concatenate((np.array([individual_spectra[0]]),individual_spectra[1:][index_list]),axis=0))
+            concentration = np.genfromtxt(file_path, delimiter=','\
+                                  , skip_header=1,usecols=np.arange(2,2+NUM_TARGETS),max_rows=1\
+                                  ,dtype=float)
+            MIXTURE_CONCENTRATIONS.append(concentration[index_list])
+            data = np.loadtxt(file_path, delimiter=',', skiprows=2,usecols=[0,1]).T
+            MIXTURE_DATA.append(data)
+        MIXTURE_STANDARDIZED = self.standardize_spectra(MIXTURE_DATA)
+        self.PURE_DATA_IN_MIXTURE = PURE_DATA_IN_MIXTURE
+        self.MIXTURE_DATA = MIXTURE_DATA
+        self.MIXTURE_CONCENTRATIONS = MIXTURE_CONCENTRATIONS
+        self.MIXTURE_FILES = MIXTURE_FILES
+        self.MIXTURE_NAMES = MIXTURE_NAMES
+        self.NUM_MIXED = len(MIXTURE_FILES)
+        self.MIXTURE_STANDARDIZED = np.copy(MIXTURE_STANDARDIZED) 
+        self.PURE_IN_MIXTURE_STANDARDIZED = self.standardize_spectra(PURE_DATA_IN_MIXTURE)
+        return MIXTURE_STANDARDIZED
+    
+    def get_mixture_figures(self, figure_directory):
+        """
+        Returns principal component loadings of the spectra as well as the
+        matrix that multiplies the principal components of a given mixed
+        spectra to return.
+                  
+        Parameters
+        ----------
+        figure_directory : str
+            Directory where figures should be saved.
+                        
+        
+        Returns
+        -------
+        Figures describing the data        
+        """
         self._visualize_data(figure_directory)
         self._get_results(figure_directory)
         
@@ -325,15 +423,21 @@ class IR_Results(IR_DECONV):
         plt.legend([PURE_FILES[i][0:-9].replace('_',' ') for i in range(NUM_TARGETS)]+['Parity'])
         plt.xlabel('Experimental Pure Component Intensities')
         plt.ylabel('Regressed Intensities')
-        plt.savefig(figure_directory+'/Regressed_vs_Experimental.png', format='png')
-        plt.close()
+        if figure_directory == 'print':
+            plt.show()
+        else:
+            plt.savefig(figure_directory+'/Regressed_vs_Experimental.png', format='png')
+            plt.close()
         plt.figure(0, figsize=(7.2,5),dpi=400)
         plt.plot((np.min(MIXTURE_STANDARDIZED),np.max(MIXTURE_STANDARDIZED)),(np.min(MIXTURE_STANDARDIZED),np.max(MIXTURE_STANDARDIZED)),'k',zorder=0)
         plt.plot(MIXTURE_STANDARDIZED.flatten(),pure_flattend,'o')
         plt.xlabel('Mixture Intensities')
         plt.ylabel('Summed Pure\n Component Intensities')
-        plt.savefig(figure_directory+'/Summed_vs_Mixed.png', format='png')
-        plt.close()
+        if figure_directory == 'print':
+            plt.show()
+        else:
+            plt.savefig(figure_directory+'/Summed_vs_Mixed.png', format='png')
+            plt.close()
         
     def deconvolute_spectra(self, spectra):
         NUM_TARGETS = self.NUM_TARGETS
@@ -355,18 +459,16 @@ class IR_Results(IR_DECONV):
             reordered_spectra.append(reordered_spectra_i)
         return reordered_spectra
     
-    def _get_results(self,figure_directory):
-        MIXTURE_FILES = self.MIXTURE_FILES
-        FREQUENCY_RANGE = self.FREQUENCY_RANGE
-        NUM_MIXED = self.NUM_MIXED
+    def _get_results(self,figure_directory='print'):
+        self.plot_parity_plot(figure_directory)
+        self.plot_deconvoluted_spectra(figure_directory)
+        
+    def plot_parity_plot(self,figure_directory='print'):
         NUM_TARGETS = self.NUM_TARGETS
         MIXTURE_NAMES = self.MIXTURE_NAMES
         MIXED_SPECTRA = self.MIXTURE_STANDARDIZED
-        deconvolute_spectra = self.deconvolute_spectra
-        comparison_spectra = self.standardize_spectra(self.PURE_DATA_IN_MIXTURE)
         predictions = self.get_predictions(MIXED_SPECTRA)
         errors = self.get_95PI(MIXED_SPECTRA)
-        deconvoluted_spectra = deconvolute_spectra(MIXED_SPECTRA)
         True_value = np.array(self.MIXTURE_CONCENTRATIONS)
         Markers = ['o','s','D','^']
         Colors = ['orange','g','b','r']
@@ -385,9 +487,22 @@ class IR_Results(IR_DECONV):
         print('RMSE of mixed prediction: ' + str(self._get_rmse()))
         print('Max Error mixed prediction: ' + str(self._get_max_error()))
         plt.tight_layout()
-        plt.savefig(figure_directory+'/Model_Validation.png', format='png')
-        plt.close()
-
+        if figure_directory == 'print':
+            plt.show()
+        else:
+            plt.savefig(figure_directory+'/Model_Validation.png', format='png')
+            plt.close()
+    def plot_deconvoluted_spectra(self,figure_directory='print'):
+        MIXTURE_FILES = self.MIXTURE_FILES
+        FREQUENCY_RANGE = self.FREQUENCY_RANGE
+        NUM_MIXED = self.NUM_MIXED
+        NUM_TARGETS = self.NUM_TARGETS
+        MIXTURE_NAMES = self.MIXTURE_NAMES
+        MIXED_SPECTRA = self.MIXTURE_STANDARDIZED
+        deconvolute_spectra = self.deconvolute_spectra
+        comparison_spectra = self.standardize_spectra(self.PURE_DATA_IN_MIXTURE)
+        deconvoluted_spectra = deconvolute_spectra(MIXED_SPECTRA)
+        Colors = ['orange','g','b','r']
         for i in range(NUM_MIXED):
             plt.figure(i+1, figsize=(9.9,5),dpi=400)
             plt.plot(FREQUENCY_RANGE,MIXED_SPECTRA[i],'k')
@@ -403,9 +518,12 @@ class IR_Results(IR_DECONV):
             plt.ylim([0, MIXED_SPECTRA[i].max()*1.75])
             #plt.title(MIXTURE_FILES[i][:-4])
             plt.tight_layout()
-            plt.savefig(figure_directory+'/'+MIXTURE_FILES[i][:-4]+'.png', format='png')
-            plt.close()
-            np.savetxt(figure_directory+'/'+MIXTURE_FILES[i][:-4]+'.csv',np.concatenate((self.FREQUENCY_RANGE.reshape((-1,1)),MIXED_SPECTRA[i].reshape((-1,1))\
+            if figure_directory == 'print':
+                plt.show()
+            else:
+                plt.savefig(figure_directory+'/'+MIXTURE_FILES[i][:-4]+'.png', format='png')
+                plt.close()
+                np.savetxt(figure_directory+'/'+MIXTURE_FILES[i][:-4]+'.csv',np.concatenate((self.FREQUENCY_RANGE.reshape((-1,1)),MIXED_SPECTRA[i].reshape((-1,1))\
                        ,deconvoluted_spectra[i].T,comparison_spectra[i].T),axis=1)\
                        ,delimiter=',',header='Frequency,Mixed_Spectra,'+'_Deconvoluted,'.join(MIXTURE_NAMES[0])\
                        +'_Deconvoluted,'+'_PURE_SPECTRA,'.join(MIXTURE_NAMES[0])+'_PURE_SPECTRA')
@@ -430,27 +548,27 @@ class IR_Results(IR_DECONV):
     def get_predictions(self, spectra):
         spectra = np.copy(spectra)
         PCs_2_concentrations = self.PCs_2_concentrations
-        pca_components = self.pca_components
-        PCs = np.dot(spectra,pca_components.T)  
+        pca_loadings = self.pca_loadings
+        PCs = np.dot(spectra,pca_loadings.T)  
         predictions =  np.dot(PCs,PCs_2_concentrations)
         return predictions
     
     def get_95PI(self, spectra):
         spectra = np.copy(spectra)
         pure_spectra, pure_concentrations  = self._get_pure_single_spectra()
-        pca_components = self.pca_components
+        pca_loadings = self.pca_loadings
         y_fit = self.get_predictions(spectra=pure_spectra)
         NUM_TARGETS = self.NUM_TARGETS
-        Xnew = np.dot(spectra,pca_components.T)
-        Xfit = np.dot(pure_spectra,pca_components.T)
+        Xnew = np.dot(spectra,pca_loadings.T)
+        Xfit = np.dot(pure_spectra,pca_loadings.T)
         var_yfit = np.zeros(NUM_TARGETS)
         var_ynew = np.zeros((spectra.shape[0],NUM_TARGETS))
         for i in range(NUM_TARGETS):
-            var_yfit[i] = np.var(pure_concentrations[:,i]-y_fit[:,i],ddof=pca_components.shape[0])
+            var_yfit[i] = np.var(pure_concentrations[:,i]-y_fit[:,i],ddof=pca_loadings.shape[0])
             var_estimators = np.linalg.inv(np.dot(Xfit.T,Xfit))*var_yfit[i] 
             for ii in range(spectra.shape[0]):
                 x1 = np.dot(Xnew[ii],var_estimators)
                 x2 = np.dot(x1,Xnew[ii].reshape(-1,1))[0]
                 var_ynew[ii][i] = var_yfit[i]+x2
         
-        return stats.t.ppf(1-0.025,y_fit.shape[0]-pca_components.shape[0])*var_ynew**0.5
+        return stats.t.ppf(1-0.025,y_fit.shape[0]-pca_loadings.shape[0])*var_ynew**0.5
