@@ -472,7 +472,10 @@ class IR_Results(IR_DECONV):
         True_value = np.array(self.MIXTURE_CONCENTRATIONS)
         Markers = ['o','s','D','^']
         Colors = ['orange','g','b','r']
-        plt.figure(0, figsize=(7.2,5),dpi=400)
+        if figure_directory=='fit':
+            plt.figure(0)
+        else:
+            plt.figure(0, figsize=(7.2,5),dpi=400)
         for i in range(NUM_TARGETS):
             plt.plot(True_value[:,i], predictions[:,i],marker=Markers[i],color=Colors[i],linestyle='None')
             plt.errorbar(True_value[:,i], predictions[:,i], yerr=errors[:,i], xerr=None, fmt='none', ecolor='k',elinewidth=1,capsize=3)
@@ -487,7 +490,7 @@ class IR_Results(IR_DECONV):
         print('RMSE of mixed prediction: ' + str(self._get_rmse()))
         print('Max Error mixed prediction: ' + str(self._get_max_error()))
         plt.tight_layout()
-        if figure_directory == 'print':
+        if figure_directory in ['print','fit']:
             plt.show()
         else:
             plt.savefig(figure_directory+'/Model_Validation.png', format='png')
@@ -504,7 +507,10 @@ class IR_Results(IR_DECONV):
         deconvoluted_spectra = deconvolute_spectra(MIXED_SPECTRA)
         Colors = ['orange','g','b','r']
         for i in range(NUM_MIXED):
-            plt.figure(i+1, figsize=(9.9,5),dpi=400)
+            if figure_directory=='fit':
+                plt.figure(i+1)
+            else:
+                plt.figure(i+1, figsize=(9.9,5),dpi=400)
             plt.plot(FREQUENCY_RANGE,MIXED_SPECTRA[i],'k')
             for ii in range(NUM_TARGETS):
                 plt.plot(FREQUENCY_RANGE,deconvoluted_spectra[i][ii],color=Colors[ii],linestyle = '-')
@@ -518,7 +524,7 @@ class IR_Results(IR_DECONV):
             plt.ylim([0, MIXED_SPECTRA[i].max()*1.75])
             #plt.title(MIXTURE_FILES[i][:-4])
             plt.tight_layout()
-            if figure_directory == 'print':
+            if figure_directory in ['print','fit']:
                 plt.show()
             else:
                 plt.savefig(figure_directory+'/'+MIXTURE_FILES[i][:-4]+'.png', format='png')
