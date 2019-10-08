@@ -374,6 +374,12 @@ class IR_Results(IR_DECONV):
                 MIXTURE_FILES = os.listdir(mixture_data_path)
             elif os.path.isfile(mixture_data_path) == True:
                 MIXTURE_FILES = [os.path.basename(mixture_data_path)]
+            else:
+                try:
+                    open(mixture_data_path)
+                except:
+                    print('mixture_data_path is not a valide file or directory')
+                    raise
             for file in MIXTURE_FILES:
                 if os.path.isdir(mixture_data_path) == True:
                     file_path = os.path.join(mixture_data_path,file)
@@ -695,17 +701,17 @@ class IR_Results(IR_DECONV):
         Colors = ['orange','g','b','r']
         for i in range(NUM_MIXED):
             if figure_directory=='fit':
-                plt.figure(i+1)
+                plt.figure(i+1, figsize=(9.9,5))
             else:
                 plt.figure(i+1, figsize=(9.9,5),dpi=400)
             plt.plot(FREQUENCY_RANGE,MIXED_SPECTRA[i],'k')
             for ii in range(NUM_TARGETS):
                 plt.plot(FREQUENCY_RANGE,deconvoluted_spectra[i][ii],color=Colors[ii],linestyle = '-')
-            plt.plot(FREQUENCY_RANGE,np.sum(PURE_IN_MIXTURE_STANDARDIZED[i],axis=0),'k--')
+            plt.plot(FREQUENCY_RANGE,np.sum(PURE_IN_MIXTURE_STANDARDIZED[i],axis=0),'k:')
             for ii in range(NUM_TARGETS):
-                plt.plot(FREQUENCY_RANGE,PURE_IN_MIXTURE_STANDARDIZED[i][ii],color=Colors[ii],linestyle = '--')
-            plt.legend(['Mixture Spectra']+[i.replace('_',' ') +' - deconvoluted' for i in PURE_NAMES[0]]\
-                       +['Summed Pure Component Spectra']+[i.replace('_',' ') +' - pure' for i in PURE_NAMES[0]],ncol=2)
+                plt.plot(FREQUENCY_RANGE,PURE_IN_MIXTURE_STANDARDIZED[i][ii],color=Colors[ii],linestyle = ':')
+            plt.legend(['Mixture Spectra']+[i.replace('_',' ') +' - deconvoluted' for i in PURE_NAMES]\
+                       +['Summed Pure Component Spectra']+[i.replace('_',' ') +' - pure' for i in PURE_NAMES],ncol=2)
             plt.xlabel('Frequency [cm$^{-1}$]')
             plt.ylabel('Intensity')
             plt.ylim([0, MIXED_SPECTRA[i].max()*1.75])
