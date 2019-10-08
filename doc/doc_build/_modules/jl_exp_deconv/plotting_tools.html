@@ -34,6 +34,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -79,8 +80,14 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"></div>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../jl_exp_deconv.html">jl_exp_deconv</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plotting_tools.html">plotting_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../error_metrics.html">error_metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">jl_exp_deconv Gallery</a></li>
+</ul>
+
             
           
         </div>
@@ -143,28 +150,23 @@
             
   <h1>Source code for jl_exp_deconv.plotting_tools</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Spyder Editor</span>
-
-<span class="sd">This is a temporary script file.</span>
-<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">rcParams</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">rcParamsDefault</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<div class="viewcode-block" id="r2"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.plotting_tools.r2">[docs]</a><span class="k">def</span> <span class="nf">r2</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+<div class="viewcode-block" id="r2"><a class="viewcode-back" href="../../plotting_tools.html#jl_exp_deconv.plotting_tools.r2">[docs]</a><span class="k">def</span> <span class="nf">r2</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
     <span class="n">SStot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">y_true</span><span class="o">-</span><span class="n">y_true</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">SSres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">y_true</span><span class="o">-</span><span class="n">y_pred</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">SSres</span><span class="o">/</span><span class="n">SStot</span></div>
 
-<div class="viewcode-block" id="rmse"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.plotting_tools.rmse">[docs]</a><span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+<div class="viewcode-block" id="rmse"><a class="viewcode-back" href="../../plotting_tools.html#jl_exp_deconv.plotting_tools.rmse">[docs]</a><span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
     <span class="n">SSres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">y_true</span><span class="o">-</span><span class="n">y_pred</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">SSres</span><span class="o">**</span><span class="mf">0.5</span></div>
 
-<div class="viewcode-block" id="max_error"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.plotting_tools.max_error">[docs]</a><span class="k">def</span> <span class="nf">max_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+<div class="viewcode-block" id="max_error"><a class="viewcode-back" href="../../plotting_tools.html#jl_exp_deconv.plotting_tools.max_error">[docs]</a><span class="k">def</span> <span class="nf">max_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_pred</span><span class="o">-</span><span class="n">y_true</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_pred</span><span class="o">-</span><span class="n">y_true</span><span class="p">))]</span></div>
 
-<div class="viewcode-block" id="set_figure_settings"><a class="viewcode-back" href="../../index.html#jl_exp_deconv.plotting_tools.set_figure_settings">[docs]</a><span class="k">def</span> <span class="nf">set_figure_settings</span><span class="p">(</span><span class="n">Figure_Type</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="set_figure_settings"><a class="viewcode-back" href="../../plotting_tools.html#jl_exp_deconv.plotting_tools.set_figure_settings">[docs]</a><span class="k">def</span> <span class="nf">set_figure_settings</span><span class="p">(</span><span class="n">Figure_Type</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rcParamsDefault</span><span class="p">)</span>
     <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">if</span> <span class="n">Figure_Type</span> <span class="o">==</span> <span class="s1">&#39;paper&#39;</span><span class="p">:</span>

@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Spyder Editor
-
-This is a temporary script file.
-"""
 from __future__ import absolute_import, division, print_function
 from matplotlib import rcParams
 from matplotlib import rcParamsDefault

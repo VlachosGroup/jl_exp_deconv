@@ -9,27 +9,17 @@ Welcome to jl_exp_deconv's documentation!
    :maxdepth: 4
    :caption: Contents:
 
+   jl_exp_deconv
+
+   plotting_tools
+
+   error_metrics
+
+   auto_examples/index
+
 Indices and tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
-
-
-jl_exp_deconv
-=============
-.. automodule:: jl_exp_deconv.jl_exp_deconv
-   :members:
-   :undoc-members:
-   :private-members:
-
-
-
-plotting_tools
-==============
-.. automodule:: jl_exp_deconv.plotting_tools
-   :members:
-   :undoc-members:
-   :private-members:

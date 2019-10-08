@@ -12,7 +12,7 @@
 #
 import os
 import sys
-import sphinx_rtd_theme
+#import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath('../'))
 
@@ -34,8 +34,13 @@ release = '0.0.1'
 # ones.
 extensions = ['sphinx.ext.autodoc','sphinx_rtd_theme','sphinx.ext.viewcode', \
 'sphinx.ext.coverage','sphinx.ext.napoleon','sphinx.ext.mathjax','sphinx_math_dollar',
-'sphinx.ext.intersphinx']
+'sphinx.ext.intersphinx', 'sphinx_gallery.gen_gallery']
 #, 'sphinx.ext.coverage','sphinx.ext.napoleon','sphinx.ext.mathjax','sphinx_math_dollar']
+sphinx_gallery_conf = {
+     'examples_dirs': '../examples',   # path to your example scripts
+     'gallery_dirs': 'auto_examples',  # path where to save gallery generated output
+}
+
 napoleon_google_docstring = True
 napoleon_numpy_docstring = True
 napoleon_include_private_with_doc = True
@@ -49,8 +54,12 @@ intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 # The suffix of source filenames.
-source_suffix = '.txt'
-
+#source_suffix = '.txt'
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.txt': 'restructuredtext',
+    '.md': 'markdown',
+}
 # The master toctree document.
 master_doc = 'index'
 
@@ -90,7 +99,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 #}
 
 html_theme = 'sphinx_rtd_theme'
-html_theme_options = {'body_max_wdith': '90%'}
+html_theme_options = {'body_max_width': '90%'}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
