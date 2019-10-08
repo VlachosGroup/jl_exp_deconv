@@ -588,7 +588,7 @@ class IR_Results(IR_DECONV):
             alphabetically by IR_Results.PURE_FILES.
         """
         spectra = np.copy(spectra)
-        if len(spectra.shape)==1 or len(spectra.shape)==3:
+        if (len(spectra.shape)==1 and len(spectra[0].shape)>0) or len(spectra.shape)==3:
             output_list = []
             for value in spectra:
                 output_list.append(self.get_deconvoluted_spectra(value))
@@ -744,7 +744,7 @@ class IR_Results(IR_DECONV):
             Predicted concentrations
         """
         spectra = np.copy(spectra)
-        if len(spectra.shape)==1 or len(spectra.shape)==3:
+        if (len(spectra.shape)==1 and len(spectra[0].shape)>0) or len(spectra.shape)==3:
             output_list = []
             for value in spectra:
                 output_list.append(self.get_predictions(value))
@@ -773,7 +773,7 @@ class IR_Results(IR_DECONV):
             parity line.
         """
         spectra = np.copy(spectra)
-        if len(spectra.shape)==1 or len(spectra.shape)==3:
+        if (len(spectra.shape)==1 and len(spectra[0].shape)>0) or len(spectra.shape)==3:
             output_list = []
             for value in spectra:
                 output_list.append(self.get_95PI(value))
