@@ -63,5 +63,5 @@ MINOR = _version_minor
 MICRO = _version_micro
 VERSION = __version__
 PACKAGE_DATA = {'jl_exp_deconv': [pjoin('data', '*'),pjoin('data', '*','*')]}
-REQUIRES = ["numpy","scipy"]
+REQUIRES = ["numpy","scipy","matplotlib"]
 PYTHON_REQUIRES = ">= 3.5"

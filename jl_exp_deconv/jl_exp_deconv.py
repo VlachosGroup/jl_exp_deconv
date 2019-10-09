@@ -724,10 +724,10 @@ class IR_Results(IR_DECONV):
             else:
                 plt.savefig(figure_directory+'/'+MIXTURE_FILES[i][:-4]+'.png', format='png')
                 plt.close()
-                np.savetxt(figure_directory+'/'+MIXTURE_FILES[i][:-4]+'.csv',np.concatenate((self.FREQUENCY_RANGE.reshape((-1,1)),MIXED_SPECTRA[i].reshape((-1,1))\
+                np.savetxt(figure_directory+'/'+MIXTURE_FILES[i][:-4]+'_deconv'+'.csv',np.concatenate((self.FREQUENCY_RANGE.reshape((-1,1)),MIXED_SPECTRA[i].reshape((-1,1))\
                        ,deconvoluted_spectra[i].T,PURE_IN_MIXTURE_STANDARDIZED[i].T),axis=1)\
-                       ,delimiter=',',header='Frequency,Mixed_Spectra,'+'_Deconvoluted,'.join(PURE_NAMES[0])\
-                       +'_Deconvoluted,'+'_PURE_SPECTRA,'.join(PURE_NAMES[0])+'_PURE_SPECTRA')
+                       ,delimiter=',',header='Frequency,Mixed_Spectra,'+'_Deconvoluted,'.join(PURE_NAMES)\
+                       +'_Deconvoluted,'+'_PURE_SPECTRA,'.join(PURE_NAMES)+'_PURE_SPECTRA')
     
     def get_predictions(self, spectra):
         """
