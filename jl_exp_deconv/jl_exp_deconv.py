@@ -408,7 +408,7 @@ class IR_Results(IR_DECONV):
                         mixture_info = np.loadtxt(file_path, delimiter=',', skiprows=0,max_rows=1,usecols=np.arange(1,len(data)),dtype=float)
                     except ValueError:
                         mixture_info = np.loadtxt(file_path, delimiter=',', skiprows=0,max_rows=1,usecols=np.arange(1,len(data)),dtype=str)
-                    MIXTURE_INFO.append(mixture_info)
+                    MIXTURE_INFO.append(mixture_info.reshape(-1))
                 MIXTURE_DATA.append(data)
         else:
             MIXTURE_DATA = mixture_data_path
