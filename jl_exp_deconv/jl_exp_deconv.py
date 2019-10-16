@@ -393,7 +393,7 @@ class IR_Results(IR_DECONV):
                     for i in range(component.size):
                         component[i] = component[i].replace(' ','_')
                         for count, ii in enumerate(PURE_FILES):
-                            if component[i] in ii:
+                            if component[i].lower() in ii.lower():
                                 index_list[count] = i
                     individual_spectra = np.loadtxt(file_path, delimiter=',', skiprows=2,usecols=[0]+np.arange(2,2+NUM_TARGETS).tolist()).T
                     PURE_DATA_IN_MIXTURE.append(np.concatenate((np.array([individual_spectra[0]]),individual_spectra[1:][index_list]),axis=0))
@@ -505,6 +505,52 @@ class IR_Results(IR_DECONV):
             else:
                 plt.savefig(figure_directory+'/Model_Validation_v'+str(ii)+'.png', format='png')
                 plt.close()
+    
+    def save_reaction_data(self, figure_directory='fit'):
+        """
+        Returns parity plot and visualizes input data for the case the case
+        where concentrations in the mixture are unknown.
+                  
+        Parameters
+        ----------
+        figure_directory : str
+            Directory where figures should be saved.
+                        
+        Returns
+        -------
+        Saves data describing predicted concentrations.     
+        """
+        try:
+            self.MIXTURE_INFO is not None
+        except:
+            print('You must run IR_Results.set_mixture_data with\
+                  conctains_concentrations=False before running this method')
+            raise
+        FREQUENCY_RANGE = self.FREQUENCY_RANGE
+        PURE_NAMES = self.PURE_NAMES
+        MIXTURE_INFO = self.MIXTURE_INFO
+        MIXTURE_STANDARDIZED = self.MIXTURE_STANDARDIZED
+        predictions = self.get_predictions(MIXTURE_STANDARDIZED)
+        errors = self.get_95PI(MIXTURE_STANDARDIZED)
+        deconvoluted_spectra = self.get_deconvoluted_spectra(MIXTURE_STANDARDIZED)
+        if type(predictions) != list:
+            predictions = [predictions]
+            deconvoluted_spectra = [deconvoluted_spectra]
+            mixed_spectra = [MIXTURE_STANDARDIZED]
+        else:
+            mixed_spectra = MIXTURE_STANDARDIZED
+        for count, array_info in enumerate(MIXTURE_INFO):
+            data_to_save = np.concatenate((array_info.reshape(-1,1),predictions[count],errors[count]),axis=1)
+            Titles = np.concatenate((np.array(['Time']), PURE_NAMES, [i+'_errors' for i in PURE_NAMES]))
+            new_data_to_save = np.concatenate((Titles.reshape(1,-1),data_to_save),axis=0)
+            np.savetxt(figure_directory+'/concentration_data_v'+str(count)+'.csv',new_data_to_save,delimiter=',',fmt="%s")
+            for count2, time in enumerate(array_info.reshape(-1,1)):
+                data_to_save = np.concatenate((FREQUENCY_RANGE.reshape((-1,1)),mixed_spectra[count][count2].reshape((-1,1))\
+                ,deconvoluted_spectra[count][count2].T),axis=1)
+                Titles = np.concatenate((np.array(['Frequency','Mixed_Spectra']),PURE_NAMES))
+                new_data_to_save = np.concatenate((Titles.reshape(1,-1),data_to_save),axis=0)
+                np.savetxt(figure_directory+'/'+'deconvolution_v'+str(count)+'_t'+str(count2)+'_deconv'+'.csv'\
+                              ,new_data_to_save,delimiter=',',fmt="%s")
         
     def _visualize_data(self,figure_directory):
         """
@@ -667,6 +713,37 @@ class IR_Results(IR_DECONV):
         else:
             plt.savefig(figure_directory+'/Model_Validation.png', format='png')
             plt.close()
+            
+    def save_parity_data(self,figure_directory):
+        """
+        saves parity data for the case the case where concentrations in the 
+        mixture are known.
+                  
+        Parameters
+        ----------
+        figure_directory : str
+            Directory where data should be saved.
+                        
+        Returns
+        -------
+        saves parity plot.     
+        """
+        if self.MIXTURE_CONCENTRATIONS is None:
+            print('You must run IR_Results.set_mixture_data with\
+                  conctains_concentrations=True before running this method')
+            raise
+        PURE_NAMES = self.PURE_NAMES
+        MIXTURE_FILES = self.MIXTURE_FILES
+        MIXED_SPECTRA = self.MIXTURE_STANDARDIZED
+        predictions = self.get_predictions(MIXED_SPECTRA)
+        errors = self.get_95PI(MIXED_SPECTRA)
+        True_value = np.array(self.MIXTURE_CONCENTRATIONS)
+        data_to_save = np.concatenate((np.array(MIXTURE_FILES).reshape(-1,1),predictions,True_value,errors),axis=1)
+        Titles = np.concatenate((np.array(['File_name']),[i+'_pred' for i in PURE_NAMES]\
+                                 ,[i+'_real' for i in PURE_NAMES],[i+'_errors' for i in PURE_NAMES]))
+        new_data_to_save = np.concatenate((Titles.reshape(1,-1),data_to_save),axis=0)
+        np.savetxt(figure_directory+'/Model_Validation.csv',new_data_to_save,delimiter=',',fmt="%s")
+            
     def plot_deconvoluted_spectra(self,figure_directory='print'):
         """
         Returns deconvoluted spectra plot for when concentrations in the
@@ -724,10 +801,44 @@ class IR_Results(IR_DECONV):
             else:
                 plt.savefig(figure_directory+'/'+MIXTURE_FILES[i][:-4]+'.png', format='png')
                 plt.close()
-                np.savetxt(figure_directory+'/'+MIXTURE_FILES[i][:-4]+'_deconv'+'.csv',np.concatenate((self.FREQUENCY_RANGE.reshape((-1,1)),MIXED_SPECTRA[i].reshape((-1,1))\
-                       ,deconvoluted_spectra[i].T,PURE_IN_MIXTURE_STANDARDIZED[i].T),axis=1)\
-                       ,delimiter=',',header='Frequency,Mixed_Spectra,'+'_Deconvoluted,'.join(PURE_NAMES)\
-                       +'_Deconvoluted,'+'_PURE_SPECTRA,'.join(PURE_NAMES)+'_PURE_SPECTRA')
+                
+    def save_deconvoluted_spectra(self,figure_directory='print'):
+        """
+        Saves deconvoluted spectra for when concentrations in the
+        mixture are known.
+                  
+        Parameters
+        ----------
+        figure_directory : str
+            Directory where figures should be saved.
+                        
+        Returns
+        -------
+        Saves deconvoluted and pure spectra for the species.
+        """
+        try:
+            self.MIXTURE_CONCENTRATIONS is not None
+        except:
+            print('You must run IR_Results.set_mixture_data with\
+                  conctains_concentrations=True before running this method')
+            raise
+        MIXTURE_FILES = self.MIXTURE_FILES
+        FREQUENCY_RANGE = self.FREQUENCY_RANGE
+        NUM_MIXED = self.NUM_MIXED
+        PURE_NAMES = self.PURE_NAMES
+        MIXED_SPECTRA = self.MIXTURE_STANDARDIZED
+        PURE_IN_MIXTURE_STANDARDIZED = self.PURE_IN_MIXTURE_STANDARDIZED
+        get_deconvoluted_spectra = self.get_deconvoluted_spectra
+        deconvoluted_spectra = get_deconvoluted_spectra(MIXED_SPECTRA)
+        for i in range(NUM_MIXED):
+            data_to_save = np.concatenate((FREQUENCY_RANGE.reshape((-1,1)),MIXED_SPECTRA[i].reshape((-1,1))\
+                                           ,deconvoluted_spectra[i].T,PURE_IN_MIXTURE_STANDARDIZED[i].T),axis=1)
+            Titles = np.concatenate((np.array(['Frequency','Mixed_Spectra'])\
+                                     ,[ii+'_deconvoluted' for ii in PURE_NAMES]\
+                                     ,[ii+'_pure_spectra' for ii in PURE_NAMES]))
+            new_data_to_save = np.concatenate((Titles.reshape(1,-1),data_to_save),axis=0)
+            np.savetxt(figure_directory+'/'+MIXTURE_FILES[i][:-4]+'_deconv'+'.csv'\
+                       ,new_data_to_save,delimiter=',',fmt="%s")
     
     def get_predictions(self, spectra):
         """

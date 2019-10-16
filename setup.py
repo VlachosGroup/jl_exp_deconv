@@ -32,9 +32,9 @@ opts = dict(name=NAME,
             package_data=PACKAGE_DATA,
             install_requires=REQUIRES,
             python_requires=PYTHON_REQUIRES,
-            setup_requires=SETUP_REQUIRES,
-            requires=REQUIRES)
+            setup_requires=SETUP_REQUIRES)
 
+#requires=REQUIRES
 
 if __name__ == '__main__':
     setup(**opts)

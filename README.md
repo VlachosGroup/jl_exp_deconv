@@ -1,5 +1,4 @@
 ## jl_exp_deconv
-[![Build Status](https://travis-ci.org/uwescience/jl_exp_deconv.svg?branch=master)](https://travis-ci.org/uwescience/jl_exp_deconv)
 
 ### Organization of the  project
 
@@ -71,70 +70,6 @@ and type:
     py.test jl_exp_deconv
 
 This will exercise all of the tests in your code directory.
-
-We have also provided a `Makefile` that allows you to run the tests with more
-verbose and informative output from the top-level directory, by issuing the
-following from the command line:
-
-    make test
-
-### Styling
-
-Some projects include `flake8` inside their automated tests, so that every pull
-request is examined for code cleanliness.
-
-In this project, we have run `flake8` most (but not all) files, on
-most (but not all) checks:
-
-```
-flake8 --ignore N802,N806 `find . -name *.py | grep -v setup.py | grep -v /doc/`
-```
-
-This means, check all .py files, but exclude setup.py and everything in
-directories named "doc". Do all checks except N802 and N806, which enforce
-lowercase-only names for variables and functions.
-
-The `Makefile` contains an instruction for running this command as well:
-
-    make flake8
-
-### Documentation
-
-We follow the [numpy docstring
-standard](https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt),
-which specifies in detail the inputs/outputs of every function, and specifies
-how to document additional details, such as references to scientific articles,
-notes about the mathematics behind the implementation, etc.
-
-To document `jl_exp_deconv` we use the [sphinx documentation
-system](http://sphinx-doc.org/). You can follow the instructions on the sphinx
-website, and the example [here](http://matplotlib.org/sampledoc/) to set up the
-system, but we have also already initialized and commited a skeleton
-documentation system in the `docs` directory, that you can build upon.
-
-Sphinx uses a `Makefile` to build different outputs of your documentation. For
-example, if you want to generate the HTML rendering of the documentation (web
-pages that you can upload to a website to explain the software), you will type:
-
-	make html
-
-This will generate a set of static webpages in the `doc/_build/html`, which you
-can then upload to a website of your choice.
-
-Alternatively, [readthedocs.org](https://readthedocs.org) (careful,
-*not* readthedocs.**com**) is a service that will run sphinx for you,
-and upload the documentation to their website. To use this service,
-you will need to register with RTD. After you have done that, you will
-need to "import your project" from your github account, through the
-RTD web interface. To make things run smoothly, you also will need to
-go to the "admin" panel of the project on RTD, and navigate into the
-"advanced settings" so that you can tell it that your Python
-configuration file is in `doc/conf.py`:
-
-![RTD conf](https://github.com/uwescience/jl_exp_deconv/blob/master/doc/_static/RTD-advanced-conf.png)
-
- http://jl_exp_deconv.readthedocs.org/en/latest/
-
 
 ### Installation
 
