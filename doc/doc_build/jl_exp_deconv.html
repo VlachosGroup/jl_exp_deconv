@@ -36,9 +36,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="plotting_tools" href="plotting_tools.html" />
-    <link rel="prev" title="Welcome to jl_exp_deconv’s documentation!" href="index.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -82,14 +80,11 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">jl_exp_deconv</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plotting_tools.html">plotting_tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="error_metrics.html">error_metrics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">jl_exp_deconv</a></li>
 </ul>
-
+</div>
             
           
         </div>
@@ -162,29 +157,29 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>frequency_range</strong> (<em>numpy.narray</em>) – Frequencies over which to project the intensities.</p></li>
-<li><p><strong>pure_data_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Directory location where pure component spectra are stored.</p></li>
+<li><p><strong>pure_data_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Directory location where pure component spectra are stored.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Variables</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>NUM_TARGETS</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of different pure commponent species.</p></li>
-<li><p><strong>PURE_DATA</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – Original values of the of the experimental pure-component spectra.
+<li><p><strong>NUM_TARGETS</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Number of different pure commponent species.</p></li>
+<li><p><strong>PURE_DATA</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – Original values of the of the experimental pure-component spectra.
 There is a separate numpy.ndarray for each pure-component. Each
 array has shape <span class="math notranslate nohighlight">\((m+1)\)</span>x<span class="math notranslate nohighlight">\(n\)</span> where <span class="math notranslate nohighlight">\(m\)</span> is the number of spectra for a
 pure component and <span class="math notranslate nohighlight">\(n\)</span> is the number of discrete intensities
 sampled by the spectrometer. nump.ndarray[0] corresponds to the
 frequencies over which the intensities are measured.</p></li>
-<li><p><strong>PURE_CONCENTRATIONS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – Concentrations (M) for each pure-component solution measured. There
+<li><p><strong>PURE_CONCENTRATIONS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – Concentrations (M) for each pure-component solution measured. There
 is a separate numpy.ndarry for each experimental pure-component
 and each array is of length <span class="math notranslate nohighlight">\(m\)</span>.</p></li>
-<li><p><strong>PURE_FILES</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em>) – Location to each file in pure_data_path.</p></li>
+<li><p><strong>PURE_FILES</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – Location to each file in pure_data_path.</p></li>
 <li><p><strong>FREQUENCY_RANGE</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a>) – Numpy array of frequencies to project each spectra onto.</p></li>
-<li><p><strong>NUM_PURE_SPECTRA</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>]</em>) – Number of spectra for each pure-component.</p></li>
-<li><p><strong>PURE_STANDARDIZED</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – List containing standardized sets of pure spectra where each set
+<li><p><strong>NUM_PURE_SPECTRA</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – Number of spectra for each pure-component.</p></li>
+<li><p><strong>PURE_STANDARDIZED</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – List containing standardized sets of pure spectra where each set
 of spectra is represented by a <span class="math notranslate nohighlight">\(m\)</span>x<span class="math notranslate nohighlight">\(n\)</span> array where <span class="math notranslate nohighlight">\(m\)</span>
 is the the number of spectra for each pure-componet species and <span class="math notranslate nohighlight">\(n\)</span>
 is the length of FREQUENCY_RANGE.</p></li>
-<li><p><strong>PURE_NAMES</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em>) – List of pure species names.</p></li>
+<li><p><strong>PURE_NAMES</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – List of pure species names.</p></li>
 </ul>
 </dd>
 </dl>
@@ -195,7 +190,7 @@ is the length of FREQUENCY_RANGE.</p></li>
 matrix of pure spectra where <span class="math notranslate nohighlight">\(pure-single_spectra = USV^T\)</span></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>NUM_PCs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The number of principal components of the spectra to keep.</p>
+<dd class="field-odd"><p><strong>NUM_PCs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The number of principal components of the spectra to keep.</p>
 </dd>
 <dt class="field-even">Variables</dt>
 <dd class="field-even"><p><strong>TOTAL_EXPLAINED_VARIANCE</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a>) – Total explained variance by the <span class="math notranslate nohighlight">\(n\)</span> principal components where
@@ -219,7 +214,7 @@ matrix that multiplies the principal components of a given mixed
 spectra to return.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>NUM_PCs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The number of principal components of the spectra to keep.</p>
+<dd class="field-odd"><p><strong>NUM_PCs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The number of principal components of the spectra to keep.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
@@ -242,7 +237,7 @@ their pure component conentrations. Also used in regressing parameters
 for computing pure component spectra.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>concentrations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>np.ndarray</em><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – The concentration(s) whose pure-component spectra must be computed</p>
+<dd class="field-odd"><p><strong>concentrations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>np.ndarray</em><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – The concentration(s) whose pure-component spectra must be computed</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>concentration_coefficients</strong> – set of coefficients for computing pure-component spectra given
@@ -264,7 +259,7 @@ from individual concentrations</p>
 <dd class="field-odd"><p><strong>CONCENTRATIONS_2_PURE_SPECTRA</strong> – List of parameters to estimate pure-spectra given its concentration.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a>[<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -296,7 +291,7 @@ pure-component species.</p></li>
 set of frequencies.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>DATA</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – Spectra to be standardized. Must contain the experimental
+<dd class="field-odd"><p><strong>DATA</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – Spectra to be standardized. Must contain the experimental
 frequencies of the spectra to be standardized as the first entry
 of each ndarry and all following entries are the spectra.
 Each ndarray should there for be of shape (&gt;1,n) where n is the
@@ -307,7 +302,7 @@ number of frequencies sampled by the spectrometer.</p>
 onto FREQUENCY_RANGE.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a>[<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -322,9 +317,9 @@ monotonically with concentration.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>NUM_PCs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The number of principal components of the spectra to keep.</p></li>
+<li><p><strong>NUM_PCs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The number of principal components of the spectra to keep.</p></li>
 <li><p><strong>frequency_range</strong> (<em>numpy.narray</em>) – Frequencies over which to project the intensities.</p></li>
-<li><p><strong>pure_data_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Directory location where pure component spectra are stored.</p></li>
+<li><p><strong>pure_data_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Directory location where pure component spectra are stored.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Variables</dt>
@@ -343,7 +338,7 @@ components of a mixed spectra.</p></li>
 <dd><p>Plots visualization of the input data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>figure_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Directory where figures should be saved. In place of a directory,
+<dd class="field-odd"><p><strong>figure_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Directory where figures should be saved. In place of a directory,
 keywords ‘fit’ or ‘print’ can also be provided. These do not save
 the images but sends them to the gui; ‘fit’ adjusts the figure
 size to the screen it is being viewed on.</p>
@@ -372,7 +367,7 @@ error bars of the predicted concentrations should overlap the
 parity line.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a>[<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -394,7 +389,7 @@ alphabetically by IR_Results.MIXTURE_FILES. Each numpy array is ordered
 alphabetically by IR_Results.PURE_FILES.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a>] or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a>]]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a>[<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a>] or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a>[<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a>]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -406,7 +401,7 @@ alphabetically by IR_Results.PURE_FILES.</p>
 where concentrations in the mixture are known.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>figure_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Directory where figures should be saved. In place of a directory,
+<dd class="field-odd"><p><strong>figure_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Directory where figures should be saved. In place of a directory,
 keywords ‘fit’ or ‘print’ can also be provided. These do not save
 the images but sends them to the gui; ‘fit’ adjusts the figure
 size to the screen it is being viewed on.</p>
@@ -434,7 +429,7 @@ IR_Results.MIXTURE_STANDARDIZED.</p>
 <dd class="field-even"><p><strong>predictions</strong> – Predicted concentrations</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a>[<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)">numpy.ndarray</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -446,7 +441,7 @@ IR_Results.MIXTURE_STANDARDIZED.</p>
 where concentrations in the mixture are unknown.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>figure_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Directory where figures should be saved. In place of a directory,
+<dd class="field-odd"><p><strong>figure_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Directory where figures should be saved. In place of a directory,
 keywords ‘fit’ or ‘print’ can also be provided. These do not save
 the images but sends them to the gui; ‘fit’ adjusts the figure
 size to the screen it is being viewed on.</p>
@@ -467,7 +462,7 @@ size to the screen it is being viewed on.</p>
 mixture are known.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>figure_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Directory where figures should be saved. In place of a directory,
+<dd class="field-odd"><p><strong>figure_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Directory where figures should be saved. In place of a directory,
 keywords ‘fit’ or ‘print’ can also be provided. These do not save
 the images but sends them to the gui; ‘fit’ adjusts the figure
 size to the screen it is being viewed on.</p>
@@ -489,7 +484,7 @@ size to the screen it is being viewed on.</p>
 mixture are known.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>figure_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Directory where figures should be saved. In place of a directory,
+<dd class="field-odd"><p><strong>figure_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Directory where figures should be saved. In place of a directory,
 keywords ‘fit’ or ‘print’ can also be provided. These do not save
 the images but sends them to the gui; ‘fit’ adjusts the figure
 size to the screen it is being viewed on.</p>
@@ -504,6 +499,60 @@ size to the screen it is being viewed on.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="jl_exp_deconv.jl_exp_deconv.IR_Results.save_deconvoluted_spectra">
+<code class="sig-name descname">save_deconvoluted_spectra</code><span class="sig-paren">(</span><em class="sig-param">figure_directory='print'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jl_exp_deconv/jl_exp_deconv.html#IR_Results.save_deconvoluted_spectra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.IR_Results.save_deconvoluted_spectra" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves deconvoluted spectra for when concentrations in the
+mixture are known.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>figure_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Directory where figures should be saved.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Saves deconvoluted and pure spectra for the species.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="jl_exp_deconv.jl_exp_deconv.IR_Results.save_parity_data">
+<code class="sig-name descname">save_parity_data</code><span class="sig-paren">(</span><em class="sig-param">figure_directory</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jl_exp_deconv/jl_exp_deconv.html#IR_Results.save_parity_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.IR_Results.save_parity_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>saves parity data for the case the case where concentrations in the
+mixture are known.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>figure_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Directory where data should be saved.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>saves parity plot.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="jl_exp_deconv.jl_exp_deconv.IR_Results.save_reaction_data">
+<code class="sig-name descname">save_reaction_data</code><span class="sig-paren">(</span><em class="sig-param">figure_directory='fit'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jl_exp_deconv/jl_exp_deconv.html#IR_Results.save_reaction_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.IR_Results.save_reaction_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns parity plot and visualizes input data for the case the case
+where concentrations in the mixture are unknown.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>figure_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Directory where figures should be saved.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Saves data describing predicted concentrations.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="jl_exp_deconv.jl_exp_deconv.IR_Results.set_mixture_data">
 <code class="sig-name descname">set_mixture_data</code><span class="sig-paren">(</span><em class="sig-param">mixture_data_path</em>, <em class="sig-param">contains_concentrations=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jl_exp_deconv/jl_exp_deconv.html#IR_Results.set_mixture_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jl_exp_deconv.jl_exp_deconv.IR_Results.set_mixture_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiates the mixture data that needs to deconvoluted from the file(s)
@@ -511,29 +560,29 @@ in mixture_data_path. A path to a folder of files, a single file, or
 a numpy array can be passed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>mixture_data_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>numpy.array</em>) – Directory or file where mixture data is stored. A numpy.array is
+<dd class="field-odd"><p><strong>mixture_data_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> or </em><em>numpy.array</em>) – Directory or file where mixture data is stored. A numpy.array is
 also accepted.</p>
 </dd>
 <dt class="field-even">Variables</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>PURE_DATA_IN_MIXTURE</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – List containing unstandardized single-spectra data. Read from the
+<li><p><strong>PURE_DATA_IN_MIXTURE</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – List containing unstandardized single-spectra data. Read from the
 mixture files by numpy.load.txt. Instantiated if
 contains_concentrations=True.</p></li>
-<li><p><strong>MIXTURE_DATA</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – List containing unstandardized mixture spectra directly from .csv
+<li><p><strong>MIXTURE_DATA</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – List containing unstandardized mixture spectra directly from .csv
 files. Read by numpy.loadtxt.</p></li>
-<li><p><strong>MIXTURE_CONCENTRATIONS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – List containing pure-component concentrations. Instantiated if
+<li><p><strong>MIXTURE_CONCENTRATIONS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – List containing pure-component concentrations. Instantiated if
 contains_concentrations=True.</p></li>
-<li><p><strong>MIXTURE_FILES</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em>) – </p></li>
+<li><p><strong>MIXTURE_FILES</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – </p></li>
 <li><p><strong>containing file</strong><strong>(</strong><strong>s</strong><strong>) </strong><strong>in mixture_data_path.</strong> (<em>List</em>) – </p></li>
-<li><p><strong>PURE_DATA_IN_MIXTURE_STANDARDIZED</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – List containing standardized pure-component spectra projected onto
+<li><p><strong>PURE_DATA_IN_MIXTURE_STANDARDIZED</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a><em>]</em>) – List containing standardized pure-component spectra projected onto
 FREQUENCY_RANGE. Instantiated if contains_concentrations=True.</p></li>
 <li><p><strong>MIXTURE_STANDARDIZED</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><em>numpy.ndarray</em></a>) – List containing standardized mixture spectra projected onto
 FREQUENCY_RANGE. If data is from mixture(s) with concentration data
 then it is a 2-D array. If data is from reaction data it is either
 an array of objects which obejct is a numpy or it is a 3-D array if
 all reaction files have the same number of spectra.</p></li>
-<li><p><strong>NUM_MIXED</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of MIXTURE_FILES</p></li>
-<li><p><strong>MIXTURE_INFO</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em>) – Data from the first row of the mixture.csv files if
+<li><p><strong>NUM_MIXED</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Length of MIXTURE_FILES</p></li>
+<li><p><strong>MIXTURE_INFO</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – Data from the first row of the mixture.csv files if
 contains_concentrations=False</p></li>
 </ul>
 </dd>
@@ -566,15 +615,6 @@ paths for locations of the pure and mixture spectroscopic data.</p>
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="plotting_tools.html" class="btn btn-neutral float-right" title="plotting_tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to jl_exp_deconv’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

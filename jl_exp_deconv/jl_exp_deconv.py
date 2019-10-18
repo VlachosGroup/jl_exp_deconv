@@ -535,12 +535,13 @@ class IR_Results(IR_DECONV):
         deconvoluted_spectra = self.get_deconvoluted_spectra(MIXTURE_STANDARDIZED)
         if type(predictions) != list:
             predictions = [predictions]
+            errors = [errors]
             deconvoluted_spectra = [deconvoluted_spectra]
             mixed_spectra = [MIXTURE_STANDARDIZED]
         else:
             mixed_spectra = MIXTURE_STANDARDIZED
         for count, array_info in enumerate(MIXTURE_INFO):
-            data_to_save = np.concatenate((array_info.reshape(-1,1),predictions[count],errors[count]),axis=1)
+            data_to_save = np.concatenate((array_info.reshape((-1,1)),predictions[count],errors[count]),axis=1)
             Titles = np.concatenate((np.array(['Time']), PURE_NAMES, [i+'_errors' for i in PURE_NAMES]))
             new_data_to_save = np.concatenate((Titles.reshape(1,-1),data_to_save),axis=0)
             np.savetxt(figure_directory+'/concentration_data_v'+str(count)+'.csv',new_data_to_save,delimiter=',',fmt="%s")
