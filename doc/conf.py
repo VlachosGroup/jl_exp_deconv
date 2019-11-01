@@ -40,7 +40,7 @@ sphinx_gallery_conf = {
      'examples_dirs': '../examples',   # path to your example scripts
      'gallery_dirs': 'auto_examples',  # path where to save gallery generated output
 }
-
+add_module_names = False
 autosummary_generate = True
 napoleon_google_docstring = True
 napoleon_numpy_docstring = True

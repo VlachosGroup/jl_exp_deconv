@@ -281,7 +281,7 @@ class IR_DECONV:
             
 
 class IR_Results(IR_DECONV):
-    """Class for deconvoluting experimental spectra whose intensity increaeses
+    """Child class of IR_DECONV for deconvoluting experimental spectra whose intensity increaeses
        monotonically with concentration."""
     def __init__(self, NUM_PCs, frequency_range, pure_data_path):
         """ 

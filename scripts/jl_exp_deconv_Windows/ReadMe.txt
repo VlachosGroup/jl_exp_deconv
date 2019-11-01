@@ -6,8 +6,10 @@ The file explains how to use the jl_exp_deconv files for Windows.
 labels in the first row should be contained in the names of the files from 1a. Spaces and underscores are interchangeable. This ensures that the predicted
 pure-component concentration can be matched to the actual pure-component concentration.
 3) Ensure that mixture data without known concentrations is saved as .csv files in a mannery similar to the data in the reaction_files directory.
-4) Doulbe click on python-3.7.4-amd64.exe to install python on your machine (you can do this directly from python's website if you wish
-https://www.python.org/downloads/windows/). Ensure that python is added to the windows PATH environment
+4) Double click on Miniconda3-latest-Windows-x86_64.exe to install python on your machine (you can do this directly from python's website if you wish
+https://docs.conda.io/en/latest/miniconda.html). Ensure that python is added to the windows PATH environment
+*This means checking the box that says "Add Anaconda to the system PATH environment variable"
+**Using miniconda or anaconda is important to get scipy to work correctly on windows.
 5) Double click on install_jl_exp_deconv_bat.bat (only needs to be done once).
 6) Double click on run_jl_exp_deconv_bat.bat to generate predicted concentrations and deconvoluted data files.
 *when prompted directory paths should look like the following: C:\Users\Username\Downloads\jl_exp_deconv_Windows\mixture_files
