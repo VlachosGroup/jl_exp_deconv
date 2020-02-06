@@ -1,0 +1,313 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Deconvoluting spectra with jl_exp_deconv &mdash; jl_exp_deconv 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Predicting mixture concentration with jl_exp_deconv" href="../prediction/plot_predictions.html" />
+    <link rel="prev" title="Examples" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> jl_exp_deconv
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../jl_exp_deconv.html">jl_exp_deconv</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plotting_tools.html">plotting_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../error_metrics.html">error_metrics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#deconvolution-examples">Deconvolution examples</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Deconvoluting spectra with jl_exp_deconv</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#loading-data">Loading data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#set-figure-settings">Set figure settings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plot-deconvolution-for-mixture-with-known-species-concentrations">Plot deconvolution for mixture with known species-concentrations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plot-deconvolution-of-fructose-and-hmf-during-reaction">Plot deconvolution of Fructose and HMF during reaction</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#prediction-examples">Prediction examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#running-on-windows">Running on Windows</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">jl_exp_deconv</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Examples</a> &raquo;</li>
+        
+      <li>Deconvoluting spectra with jl_exp_deconv</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/auto_examples/deconvolution/plot_deconvolution.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-deconvolution-plot-deconvolution-py"><span class="std std-ref">here</span></a> to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="deconvoluting-spectra-with-jl-exp-deconv">
+<span id="sphx-glr-auto-examples-deconvolution-plot-deconvolution-py"></span><h1>Deconvoluting spectra with jl_exp_deconv<a class="headerlink" href="#deconvoluting-spectra-with-jl-exp-deconv" title="Permalink to this headline">¶</a></h1>
+<p>This example shows how to deconvolute spectra using the model</p>
+<p>The parity plot for the mixtures where concentrations are known is shown in
+figure 1 and the plot of concentration with time for the experimental spectra
+from reacting systems are shown in figure 2 and 3 for different starting
+concentrations</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">jl_exp_deconv</span> <span class="k">import</span> <span class="n">IR_Results</span>
+<span class="kn">from</span> <span class="nn">jl_exp_deconv</span> <span class="k">import</span> <span class="n">get_defaults</span>
+<span class="kn">from</span> <span class="nn">jl_exp_deconv.plotting_tools</span> <span class="k">import</span> <span class="n">set_figure_settings</span>
+</pre></div>
+</div>
+<div class="section" id="loading-data">
+<h2>Loading data<a class="headerlink" href="#loading-data" title="Permalink to this headline">¶</a></h2>
+<p>First, we’ll get the default data and load it into jl_exp_deconv. It automatically
+fits the model to the data in pure_data_path</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">frequency_range</span><span class="p">,</span> <span class="n">pure_data_path</span><span class="p">,</span> <span class="n">mixture_data_path</span><span class="p">,</span> <span class="n">reaction_data_path</span> <span class="o">=</span> <span class="n">get_defaults</span><span class="p">()</span>
+<span class="n">deconv</span> <span class="o">=</span> <span class="n">IR_Results</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">frequency_range</span><span class="p">,</span> <span class="n">pure_data_path</span><span class="p">)</span>
+<span class="n">mixture_data_path_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mixture_data_path</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">mixture_data_path</span><span class="p">)[</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">deconv</span><span class="o">.</span><span class="n">set_mixture_data</span><span class="p">(</span><span class="n">mixture_data_path_file</span><span class="p">)</span>
+<span class="n">deconv_reaction</span> <span class="o">=</span> <span class="n">IR_Results</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">frequency_range</span><span class="p">,</span> <span class="n">pure_data_path</span><span class="p">)</span>
+<span class="n">deconv_reaction</span><span class="o">.</span><span class="n">set_mixture_data</span><span class="p">(</span><span class="n">reaction_data_path</span><span class="p">,</span> <span class="n">contains_concentrations</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-figure-settings">
+<h2>Set figure settings<a class="headerlink" href="#set-figure-settings" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">figure_folder</span><span class="o">=</span><span class="s1">&#39;fit&#39;</span>
+<span class="n">set_figure_settings</span><span class="p">(</span><span class="s1">&#39;presentation&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="plot-deconvolution-for-mixture-with-known-species-concentrations">
+<h2>Plot deconvolution for mixture with known species-concentrations<a class="headerlink" href="#plot-deconvolution-for-mixture-with-known-species-concentrations" title="Permalink to this headline">¶</a></h2>
+<p>Plot comparison of deconvoluted spectra and pure-spectra</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">deconv</span><span class="o">.</span><span class="n">plot_deconvoluted_spectra</span><span class="p">(</span><span class="n">figure_folder</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/sphx_glr_plot_deconvolution_001.png" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_deconvolution_001.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\jl_exp_deconv\jl_exp_deconv\jl_exp_deconv.py:721: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()
+</pre></div>
+</div>
+</div>
+<div class="section" id="plot-deconvolution-of-fructose-and-hmf-during-reaction">
+<h2>Plot deconvolution of Fructose and HMF during reaction<a class="headerlink" href="#plot-deconvolution-of-fructose-and-hmf-during-reaction" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">deconvouted_spectra</span> <span class="o">=</span> <span class="n">deconv_reaction</span><span class="o">.</span><span class="n">get_deconvoluted_spectra</span><span class="p">(</span><span class="n">deconv_reaction</span><span class="o">.</span><span class="n">MIXTURE_STANDARDIZED</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">deconv_reaction</span><span class="o">.</span><span class="n">NUM_TARGETS</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">deconv_reaction</span><span class="o">.</span><span class="n">PURE_NAMES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Fructose&#39;</span><span class="p">:</span>
+        <span class="n">fructose_index</span> <span class="o">=</span> <span class="n">i</span>
+    <span class="k">elif</span> <span class="n">deconv_reaction</span><span class="o">.</span><span class="n">PURE_NAMES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;HMF&#39;</span><span class="p">:</span>
+        <span class="n">HMF_index</span> <span class="o">=</span> <span class="n">i</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.9</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">Colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">spectra</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">deconvouted_spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">])[:,</span><span class="n">fructose_index</span><span class="p">][</span><span class="mi">0</span><span class="p">::</span><span class="mi">5</span><span class="p">]):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">deconv_reaction</span><span class="o">.</span><span class="n">FREQUENCY_RANGE</span><span class="p">,</span><span class="n">spectra</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">Colors</span><span class="p">[</span><span class="n">count</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">spectra</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">deconvouted_spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">])[:,</span><span class="n">HMF_index</span><span class="p">][</span><span class="mi">0</span><span class="p">::</span><span class="mi">5</span><span class="p">]):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">deconv_reaction</span><span class="o">.</span><span class="n">FREQUENCY_RANGE</span><span class="p">,</span><span class="n">spectra</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">Colors</span><span class="p">[</span><span class="n">count</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">deconvouted_spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">])[:,</span><span class="n">fructose_index</span><span class="p">]))[</span><span class="mi">0</span><span class="p">::</span><span class="mi">5</span><span class="p">]]</span> <span class="o">+</span>\
+            <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">deconvouted_spectra</span><span class="p">[</span><span class="mi">0</span><span class="p">])[:,</span><span class="n">HMF_index</span><span class="p">]))[</span><span class="mi">0</span><span class="p">::</span><span class="mi">5</span><span class="p">]],</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Time: Fructose (dotted) and HMF (line)&#39;</span><span class="p">,</span><span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency [cm$^{-1}$]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Intensity&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../../_images/sphx_glr_plot_deconvolution_002.png" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_deconvolution_002.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\jl_exp_deconv\examples\deconvolution\plot_deconvolution.py:64: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.722 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-deconvolution-plot-deconvolution-py">
+<div class="sphx-glr-download docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/878ed76007c199e8f67e21632e240e30/plot_deconvolution.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_deconvolution.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/93dd5fedb08d7518b990a387efd595e8/plot_deconvolution.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_deconvolution.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../prediction/plot_predictions.html" class="btn btn-neutral float-right" title="Predicting mixture concentration with jl_exp_deconv" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Joshua Lansford
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
