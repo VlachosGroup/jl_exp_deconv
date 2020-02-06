@@ -1,35 +1,5 @@
 ## jl_exp_deconv
 
-### Organization of the  project
-
-The project has the following structure:
-
-    jl_exp_deconv/
-      |- README.md
-      |- jl_exp_deconv/
-         |- __init__.py
-         |- jl_exp_deconv.py
-         |- due.py
-         |- data/
-            |- ...
-         |- tests/
-            |- ...
-      |- doc/
-         |- Makefile
-         |- conf.py
-         |- sphinxext/
-            |- ...
-         |- _static/
-            |- ...
-      |- setup.py
-      |- .travis.yml
-      |- .mailmap
-      |- appveyor.yml
-      |- LICENSE
-      |- Makefile
-      |- ipynb/
-         |- ...
-
 jl_exp_deconv deconvolutes experimental mixture spectra via a model that is trained on experimental pure-component spectra.
 
 ### Module code
