@@ -256,6 +256,7 @@ class IR_DECONV:
         pca_loadings = _get_PC_loadings(NUM_PCs)
         PCs = np.dot(pure_spectra,pca_loadings.T)
         PCs_2_concentrations, res, rank, s = np.linalg.lstsq(PCs,concentrations,rcond=None)
+        self.res = res
         return pca_loadings, PCs_2_concentrations
     
     def _get_concentration_coefficients(self,concentrations):

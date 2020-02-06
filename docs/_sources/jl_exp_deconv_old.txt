@@ -1,0 +1,7 @@
+jl_exp_deconv
+=============
+.. automodule:: jl_exp_deconv.jl_exp_deconv
+   :members:
+   :undoc-members:
+   :private-members:
+
