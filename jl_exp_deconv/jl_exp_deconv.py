@@ -493,12 +493,12 @@ class IR_Results(IR_DECONV):
             if figure_directory=='fit':
                 plt.figure(ii+1)
             else:
-                plt.figure(ii+1, figsize=(7.2,5),dpi=400)
+                plt.figure(ii+1, figsize=(3.5,2.5),dpi=400)
             for i in range(NUM_TARGETS):
                 plt.plot(MIXTURE_INFO[ii], predictions[ii][:,i],marker=Markers[i],color=Colors[i],linestyle=linestyle[i])
                 plt.errorbar(MIXTURE_INFO[ii], predictions[ii][:,i], yerr=errors[ii][:,i], xerr=None, fmt='none', ecolor='k',elinewidth=1,capsize=3)
                 plt.errorbar(MIXTURE_INFO[ii], predictions[ii][:,i], yerr=errors[ii][:,i], xerr=None, fmt='none', ecolor='k', barsabove=True,elinewidth=1,capsize=3)
-            plt.legend([i.replace('_',' ') for i in PURE_NAMES])
+            #plt.legend([i.replace('_',' ') for i in PURE_NAMES])
             plt.xlabel('Time')
             plt.ylabel('Predicted Concentration')
             plt.tight_layout()
@@ -597,7 +597,6 @@ class IR_Results(IR_DECONV):
             plt.plot(PURE_STANDARDIZED[i].flatten()\
                      ,fit_values-PURE_STANDARDIZED[i].flatten()\
                      ,markers[i])   
-        plt.plot((np.min(PURE_STANDARDIZED),np.max(PURE_STANDARDIZED)),(np.min(PURE_STANDARDIZED),np.max(PURE_STANDARDIZED)),'k',zorder=0)
         plt.legend([PURE_NAMES[i].replace('_',' ') for i in range(NUM_TARGETS)]+['Parity'])
         plt.xlabel('Experimental Pure Component Intensities')
         plt.ylabel('Regressed Intensities')
