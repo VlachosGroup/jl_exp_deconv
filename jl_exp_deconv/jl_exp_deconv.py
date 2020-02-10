@@ -277,7 +277,8 @@ class IR_DECONV:
             the concentration of that pure-component
         
         """
-        concentration_coefficients = np.concatenate((np.ones_like(concentrations).reshape(-1,1), concentrations.reshape(-1,1), concentrations.reshape(-1,1)**2, concentrations.reshape(-1,1)**3),axis=1)            
+        #concentration_coefficients = np.concatenate((np.ones_like(concentrations).reshape(-1,1), concentrations.reshape(-1,1), concentrations.reshape(-1,1)**2, concentrations.reshape(-1,1)**3),axis=1)
+        concentration_coefficients = np.concatenate((concentrations.reshape(-1,1), concentrations.reshape(-1,1)**2),axis=1)
         return concentration_coefficients
             
 
@@ -589,12 +590,12 @@ class IR_Results(IR_DECONV):
         if figure_directory=='fit':
             plt.figure(0)
         else:
-            plt.figure(0, figsize=(7.2,5),dpi=400)
+            plt.figure(0, figsize=(3.5,3.5),dpi=400)
         #print('Comparing regression to pure species spectra')
         for i in range(NUM_TARGETS):
             fit_values = np.dot(CONCENTRATION_COEFFICIENTS[i], CONCENTRATIONS_2_PURE_SPECTRA[i]).flatten()
             plt.plot(PURE_STANDARDIZED[i].flatten()\
-                     ,fit_values\
+                     ,fit_values-PURE_STANDARDIZED[i].flatten()\
                      ,markers[i])   
         plt.plot((np.min(PURE_STANDARDIZED),np.max(PURE_STANDARDIZED)),(np.min(PURE_STANDARDIZED),np.max(PURE_STANDARDIZED)),'k',zorder=0)
         plt.legend([PURE_NAMES[i].replace('_',' ') for i in range(NUM_TARGETS)]+['Parity'])
