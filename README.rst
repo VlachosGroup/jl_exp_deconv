@@ -1,8 +1,8 @@
-jl_exp_deconv
-=============
+Python-based Quantification under Uncerainty with Analysis through Deconvolution (pQUAD)
+========================================================================================
 Methods to deconvolute experimental mixture spectra via a model that is trained on experimental pure-component spectra.
 
-This is documentation for https://github.com/VlachosGroup/jl_exp_deconv.
+This is documentation for https://github.com/VlachosGroup/pQUAD.
 
 Documentation
 -------------
@@ -34,4 +34,4 @@ License
 This project is licensed under the MIT License - see the `LICENSE.md`
 file for details.
 
-.. _`documentation page`: https://vlachosgroup.github.io/jl_exp_deconv/
+.. _`documentation page`: https://vlachosgroup.github.io/pQUAD/
