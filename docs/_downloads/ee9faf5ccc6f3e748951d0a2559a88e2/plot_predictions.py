@@ -1,6 +1,6 @@
 """
 ===================================================
-Predicting mixture concentration with jl_exp_deconv
+Predicting mixture concentration with pquad
 ===================================================
 
 This example shows how to plot predictions from the model
@@ -10,15 +10,15 @@ figure 1 and the plot of concentration with time for the experimental spectra
 from reacting systems are shown in figure 2 and 3 for different starting
 concentrations
 """
-from jl_exp_deconv import IR_Results
-from jl_exp_deconv import get_defaults
-from jl_exp_deconv.plotting_tools import set_figure_settings
+from pquad import IR_Results
+from pquad import get_defaults
+from pquad.plotting_tools import set_figure_settings
 
 #######################################################################################
 # Loading data
 # ------------
 #
-# First, we'll get the default data and load it into jl_exp_deconv. It automatically
+# First, we'll get the default data and load it into pquad. It automatically
 # fits the model to the data in pure_data_path
 frequency_range, pure_data_path, mixture_data_path, reaction_data_path = get_defaults()
 deconv = IR_Results(4, frequency_range, pure_data_path)

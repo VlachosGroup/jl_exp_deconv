@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Predicting mixture concentration with jl_exp_deconv &mdash; jl_exp_deconv 0.0.1 documentation</title>
+  <title>Predicting mixture concentration with pquad &mdash; pquad 0.0.1 documentation</title>
   
 
   
@@ -35,10 +35,12 @@
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Python file created by .bat to run easily on Windows" href="../running on windows/jl_exp_deconv_windows.html" />
-    <link rel="prev" title="Deconvoluting spectra with jl_exp_deconv" href="../deconvolution/plot_deconvolution.html" /> 
+    <link rel="next" title="Python file created by .bat to run easily on Windows" href="../running on windows/pquad_windows.html" />
+    <link rel="prev" title="Deconvoluting spectra with pquad" href="../deconvolution/plot_deconvolution.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -52,7 +54,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> jl_exp_deconv
+            <a href="../../index.html" class="icon icon-home"> pquad
           
 
           
@@ -84,13 +86,13 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../jl_exp_deconv.html">jl_exp_deconv</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pquad.html">pquad</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../plotting_tools.html">plotting_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../error_metrics.html">error_metrics</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../index.html#deconvolution-examples">Deconvolution examples</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html#prediction-examples">Prediction examples</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Predicting mixture concentration with jl_exp_deconv</a><ul>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Predicting mixture concentration with pquad</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#loading-data">Loading data</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#set-figure-settings">Set figure settings</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#plot-parity-plot">Plot parity plot</a></li>
@@ -116,7 +118,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">jl_exp_deconv</a>
+          <a href="../../index.html">pquad</a>
         
       </nav>
 
@@ -149,7 +151,7 @@
         
           <li><a href="../index.html">Examples</a> &raquo;</li>
         
-      <li>Predicting mixture concentration with jl_exp_deconv</li>
+      <li>Predicting mixture concentration with pquad</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -170,35 +172,35 @@
             
   <div class="sphx-glr-download-link-note admonition note">
 <p class="admonition-title">Note</p>
-<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-prediction-plot-predictions-py"><span class="std std-ref">here</span></a> to download the full example code</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-prediction-plot-predictions-py"><span class="std std-ref">here</span></a>     to download the full example code</p>
 </div>
-<div class="sphx-glr-example-title section" id="predicting-mixture-concentration-with-jl-exp-deconv">
-<span id="sphx-glr-auto-examples-prediction-plot-predictions-py"></span><h1>Predicting mixture concentration with jl_exp_deconv<a class="headerlink" href="#predicting-mixture-concentration-with-jl-exp-deconv" title="Permalink to this headline">¶</a></h1>
+<div class="sphx-glr-example-title section" id="predicting-mixture-concentration-with-pquad">
+<span id="sphx-glr-auto-examples-prediction-plot-predictions-py"></span><h1>Predicting mixture concentration with pquad<a class="headerlink" href="#predicting-mixture-concentration-with-pquad" title="Permalink to this headline">¶</a></h1>
 <p>This example shows how to plot predictions from the model</p>
 <p>The parity plot for the mixtures where concentrations are known is shown in
 figure 1 and the plot of concentration with time for the experimental spectra
 from reacting systems are shown in figure 2 and 3 for different starting
 concentrations</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jl_exp_deconv</span> <span class="k">import</span> <span class="n">IR_Results</span>
-<span class="kn">from</span> <span class="nn">jl_exp_deconv</span> <span class="k">import</span> <span class="n">get_defaults</span>
-<span class="kn">from</span> <span class="nn">jl_exp_deconv.plotting_tools</span> <span class="k">import</span> <span class="n">set_figure_settings</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pquad</span> <span class="kn">import</span> <span class="n">IR_Results</span>
+<span class="kn">from</span> <span class="nn">pquad</span> <span class="kn">import</span> <span class="n">get_defaults</span>
+<span class="kn">from</span> <span class="nn">pquad.plotting_tools</span> <span class="kn">import</span> <span class="n">set_figure_settings</span>
 </pre></div>
 </div>
 <div class="section" id="loading-data">
 <h2>Loading data<a class="headerlink" href="#loading-data" title="Permalink to this headline">¶</a></h2>
-<p>First, we’ll get the default data and load it into jl_exp_deconv. It automatically
+<p>First, we’ll get the default data and load it into pquad. It automatically
 fits the model to the data in pure_data_path</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">frequency_range</span><span class="p">,</span> <span class="n">pure_data_path</span><span class="p">,</span> <span class="n">mixture_data_path</span><span class="p">,</span> <span class="n">reaction_data_path</span> <span class="o">=</span> <span class="n">get_defaults</span><span class="p">()</span>
-<span class="n">deconv</span> <span class="o">=</span> <span class="n">IR_Results</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">frequency_range</span><span class="p">,</span> <span class="n">pure_data_path</span><span class="p">)</span>
-<span class="n">deconv</span><span class="o">.</span><span class="n">set_mixture_data</span><span class="p">(</span><span class="n">mixture_data_path</span><span class="p">)</span>
-<span class="n">deconv_reaction</span> <span class="o">=</span> <span class="n">IR_Results</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">frequency_range</span><span class="p">,</span> <span class="n">pure_data_path</span><span class="p">)</span>
-<span class="n">deconv_reaction</span><span class="o">.</span><span class="n">set_mixture_data</span><span class="p">(</span><span class="n">reaction_data_path</span><span class="p">,</span> <span class="n">contains_concentrations</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">frequency_range</span></a></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">pure_data_path</span></a></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mixture_data_path</span></a></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">reaction_data_path</span></a></a></a> <span class="o">=</span> <span class="n">get_defaults</span><span class="p">()</span>
+<span class="n">deconv</span> <span class="o">=</span> <span class="n">IR_Results</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">frequency_range</span></a></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">pure_data_path</span></a></a></a><span class="p">)</span>
+<span class="n">deconv</span><span class="o">.</span><span class="n">set_mixture_data</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mixture_data_path</span></a></a></a><span class="p">)</span>
+<span class="n">deconv_reaction</span> <span class="o">=</span> <span class="n">IR_Results</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">frequency_range</span></a></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">pure_data_path</span></a></a></a><span class="p">)</span>
+<span class="n">deconv_reaction</span><span class="o">.</span><span class="n">set_mixture_data</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">reaction_data_path</span></a></a></a><span class="p">,</span> <span class="n">contains_concentrations</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="set-figure-settings">
 <h2>Set figure settings<a class="headerlink" href="#set-figure-settings" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">figure_folder</span><span class="o">=</span><span class="s1">&#39;fit&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">figure_folder</span></a></a></a><span class="o">=</span><span class="s1">&#39;fit&#39;</span>
 <span class="n">set_figure_settings</span><span class="p">(</span><span class="s1">&#39;presentation&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -206,15 +208,15 @@ fits the model to the data in pure_data_path</p>
 <div class="section" id="plot-parity-plot">
 <h2>Plot parity plot<a class="headerlink" href="#plot-parity-plot" title="Permalink to this headline">¶</a></h2>
 <p>Make parity plot with the 95% prediction intervals</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">deconv</span><span class="o">.</span><span class="n">plot_parity_plot</span><span class="p">(</span><span class="n">figure_folder</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">deconv</span><span class="o">.</span><span class="n">plot_parity_plot</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">figure_folder</span></a></a></a><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="../../_images/sphx_glr_plot_predictions_001.png" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_predictions_001.png" />
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>R2 of mixed prediction: 0.9848315343978736
-RMSE of mixed prediction: 0.019175659008714714
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>R2 of mixed prediction: 0.9848041280249827
+RMSE of mixed prediction: 0.019192974474399493
 Max Error mixed prediction: 0.04810819524389309
-C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\jl_exp_deconv\jl_exp_deconv\jl_exp_deconv.py:664: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pQUAD\pquad\pquad.py:714: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
   plt.show()
 </pre></div>
 </div>
@@ -222,7 +224,7 @@ C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\jl_exp_deconv\jl_exp_d
 <div class="section" id="plot-reaction-plots">
 <h2>Plot reaction plots<a class="headerlink" href="#plot-reaction-plots" title="Permalink to this headline">¶</a></h2>
 <p>Make reaction plots with the 95% prediction intervals</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">deconv_reaction</span><span class="o">.</span><span class="n">get_reaction_figures</span><span class="p">(</span><span class="n">figure_folder</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">deconv_reaction</span><span class="o">.</span><span class="n">get_reaction_figures</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">figure_folder</span></a></a></a><span class="p">)</span>
 </pre></div>
 </div>
 <ul class="sphx-glr-horizontal">
@@ -232,16 +234,18 @@ C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\jl_exp_deconv\jl_exp_d
 </li>
 </ul>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\jl_exp_deconv\jl_exp_deconv\jl_exp_deconv.py:504: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pQUAD\pquad\pquad.py:506: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()
+C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pQUAD\pquad\pquad.py:506: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
   plt.show()
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.661 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.804 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-prediction-plot-predictions-py">
-<div class="sphx-glr-download docutils container">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/ee9faf5ccc6f3e748951d0a2559a88e2/plot_predictions.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_predictions.py</span></code></a></p>
 </div>
-<div class="sphx-glr-download docutils container">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/a42630fa70b8b305aebc001a8fe782b7/plot_predictions.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_predictions.ipynb</span></code></a></p>
 </div>
 </div>
@@ -257,10 +261,10 @@ C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\jl_exp_deconv\jl_exp_d
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../running on windows/jl_exp_deconv_windows.html" class="btn btn-neutral float-right" title="Python file created by .bat to run easily on Windows" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../running on windows/pquad_windows.html" class="btn btn-neutral float-right" title="Python file created by .bat to run easily on Windows" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../deconvolution/plot_deconvolution.html" class="btn btn-neutral float-left" title="Deconvoluting spectra with jl_exp_deconv" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../deconvolution/plot_deconvolution.html" class="btn btn-neutral float-left" title="Deconvoluting spectra with pquad" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

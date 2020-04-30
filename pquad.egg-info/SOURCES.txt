@@ -1,0 +1,46 @@
+README.rst
+pyproject.toml
+setup.py
+pquad/__init__.py
+pquad/due.py
+pquad/error_metrics.py
+pquad/plotting_tools.py
+pquad/pquad.py
+pquad/version.py
+pquad.egg-info/PKG-INFO
+pquad.egg-info/SOURCES.txt
+pquad.egg-info/dependency_links.txt
+pquad.egg-info/requires.txt
+pquad.egg-info/top_level.txt
+pquad/data/0.2M equimolar mixture of HMF + fru+ La+Fa diff number of scans.xlsx
+pquad/data/081419 Mixes (0.45,0.4,0.3,0.25).xlsx
+pquad/data/082019 0.15 M Hcl +0.3M fru FULL DEHYDRATION.xlsx
+pquad/data/082819 Mixes varied concentrations.xlsx
+pquad/data/090319 Full dehydrations, high fructose, 0.15 and 0.25 M HCl.xlsx
+pquad/data/Formic Acid.xlsx
+pquad/data/Fructose Curve.xlsx
+pquad/data/HMF Curve.xlsx
+pquad/data/IR Mix Josh-with sample concentrations.xlsx
+pquad/data/Levulinic Acid.xlsx
+pquad/data/Test1-0.5M.xlsx
+pquad/data/Test4-0.05M.xlsx
+pquad/data/mixed_components/Mix1.csv
+pquad/data/mixed_components/Mix2.csv
+pquad/data/mixed_components/Mix3.csv
+pquad/data/mixed_components/Mix4.csv
+pquad/data/mixed_components/Mix5.csv
+pquad/data/mixed_components/Mix6.csv
+pquad/data/mixed_components/Mix7.csv
+pquad/data/mixed_components/Test1-0.5M.csv
+pquad/data/mixed_components/Test1=F+HMF+LA+FA.csv
+pquad/data/mixed_components/Test2=2F+HMF+LA+FA.csv
+pquad/data/mixed_components/Test3=F+2HMF+LA+FA.csv
+pquad/data/mixed_components/Test4-0.05M.csv
+pquad/data/mixed_components/Test4=F+HMF+2LA+FA.csv
+pquad/data/mixed_components/Test5=F+HMF+LA+2FA.csv
+pquad/data/pure_components/Formic_Acid_DATA.csv
+pquad/data/pure_components/Fructose_DATA.csv
+pquad/data/pure_components/HMF_DATA.csv
+pquad/data/pure_components/Levulinic_Acid_DATA.csv
+pquad/data/reaction/082019 0.15 M Hcl +0.3M fru FULL DEHYDRATION.csv
+pquad/data/reaction/090319 Full dehydrations, high fructose, 0.15 and 0.25 M HCl.csv

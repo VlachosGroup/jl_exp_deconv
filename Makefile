@@ -9,4 +9,4 @@ flake8:
 	@echo "flake8 passed"
 
 test:
-	py.test --pyargs jl_exp_deconv --cov-report term-missing --cov=jl_exp_deconv
+	py.test --pyargs pquad --cov-report term-missing --cov=pquad

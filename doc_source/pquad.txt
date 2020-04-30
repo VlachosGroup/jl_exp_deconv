@@ -1,0 +1,21 @@
+pquad
+=====
+
+The ``get_defaults`` function
+*****************************
+.. autofunction:: pquad.pquad.get_defaults
+
+The ``IR_DECONV`` class
+***********************
+.. autoclass:: pquad.pquad.IR_DECONV
+   :members:
+   :undoc-members:
+   :private-members:
+
+The ``IR_Results`` class
+************************
+.. autoclass:: pquad.pquad.IR_Results
+   :members:
+   :undoc-members:
+   :private-members:
+
