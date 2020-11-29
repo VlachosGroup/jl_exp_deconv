@@ -8,7 +8,6 @@ import numpy as np
 from pquad import get_defaults
 from pquad import IR_Results
 from pquad.plotting_tools import set_figure_settings
-from ast import literal_eval
 
 set_figure_settings('paper')
 #frequency_range = np.linspace(850,1850,num=501,endpoint=True)

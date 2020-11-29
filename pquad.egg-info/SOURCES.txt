@@ -2,7 +2,6 @@ README.rst
 pyproject.toml
 setup.py
 pquad/__init__.py
-pquad/due.py
 pquad/error_metrics.py
 pquad/plotting_tools.py
 pquad/pquad.py
